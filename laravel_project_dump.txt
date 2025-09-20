@@ -1,0 +1,719 @@
+
+================================================================================
+📄 FICHIER : .env
+================================================================================
+
+APP_NAME=Deadzone-Revive-Website-Game
+APP_ENV=local
+APP_KEY=base64:ExeRwRauhNdCwmuXAw9Pt7mUe7E4donFnN4D9elCegY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+# APP_MAINTENANCE_STORE=database
+
+PHP_CLI_SERVER_WORKERS=4
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mariadb
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=prod_deadzone_game
+DB_USERNAME=root
+DB_PASSWORD=
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+# CACHE_PREFIX=
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=log
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+
+DISCORD_CLIENT_ID=1322661381513674802
+DISCORD_CLIENT_SECRET=Xllnwl4eNmYDoLXPW7aDOPn8TcMLJ-OI
+DISCORD_REDIRECT=http://localhost/auth/discord/callback
+
+TWITTER_CLIENT_ID=your_twitter_id
+TWITTER_CLIENT_SECRET=your_twitter_secret
+TWITTER_REDIRECT=http://localhost/auth/twitter/callback
+
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret
+GITHUB_REDIRECT=http://localhost/auth/github/callback
+
+
+
+================================================================================
+📄 FICHIER : composer.json
+================================================================================
+
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0",
+        "laravel/socialite": "^5.23",
+        "laravel/tinker": "^2.10.1",
+        "socialiteproviders/discord": "^4.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.41",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^11.5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "12.x-dev"
+        },
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Http\Controllers\Controller.php
+================================================================================
+
+<?php
+
+namespace App\Http\Controllers;
+
+abstract class Controller
+{
+    //
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Http\Controllers\SocialAuthController.php
+================================================================================
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
+
+class SocialAuthController extends Controller
+{
+    public function redirectToProvider($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    public function handleProviderCallback($provider)
+    {
+        $socialUser = Socialite::driver($provider)->user();
+
+        // Generate a unique username based on social provider (e.g., discord_username or github_nickname)
+        $username = $this->generateUniqueUsername($socialUser, $provider);
+
+        // Find or create Laravel user
+        $user = User::updateOrCreate(
+            ['email' => $socialUser->getEmail()],
+            [
+                'name' => $username,
+                'password' => bcrypt(Str::random(16)), // Random password for internal use
+                // Store social ID for reference
+                $provider . '_id' => $socialUser->getId(),
+            ]
+        );
+
+        Auth::login($user, true);
+
+        // Redirect to /game and pass the username via session for prefill
+        return redirect('/game')->with('username', $username);
+    }
+
+    private function generateUniqueUsername($socialUser, $provider)
+    {
+        // Use nickname if available, fallback to name
+        $baseUsername = $socialUser->getNickname() ?? Str::slug($socialUser->getName());
+
+        // Ensure uniqueness by appending number if needed
+        $username = $baseUsername;
+        $counter = 1;
+        while (User::where('name', $username)->exists()) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
+        return $username;
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Providers\AppServiceProvider.php
+================================================================================
+
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Discord\DiscordExtendSocialite;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        $this->app['events']->listen(
+            SocialiteWasCalled::class,
+            DiscordExtendSocialite::class
+        );
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : database\factories\UserFactory.php
+================================================================================
+
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ */
+class UserFactory extends Factory
+{
+    /**
+     * The current password being used by the factory.
+     */
+    protected static ?string $password;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => static::$password ??= Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ];
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email_verified_at' => null,
+        ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : database\migrations\0001_01_01_000000_create_sessions_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id', 255)->primary();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sessions');
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\migrations\0001_01_01_000001_create_cache_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('cache', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
+        Schema::create('cache_locks', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('cache');
+        Schema::dropIfExists('cache_locks');
+    }
+};
+
+
+
+================================================================================
+📄 FICHIER : database\migrations\0001_01_01_000002_create_jobs_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('queue')->index();
+            $table->longText('payload');
+            $table->unsignedTinyInteger('attempts');
+            $table->unsignedInteger('reserved_at')->nullable();
+            $table->unsignedInteger('available_at');
+            $table->unsignedInteger('created_at');
+        });
+
+        Schema::create('job_batches', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->integer('total_jobs');
+            $table->integer('pending_jobs');
+            $table->integer('failed_jobs');
+            $table->longText('failed_job_ids');
+            $table->mediumText('options')->nullable();
+            $table->integer('cancelled_at')->nullable();
+            $table->integer('created_at');
+            $table->integer('finished_at')->nullable();
+        });
+
+        Schema::create('failed_jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('uuid')->unique();
+            $table->text('connection');
+            $table->text('queue');
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('jobs');
+        Schema::dropIfExists('job_batches');
+        Schema::dropIfExists('failed_jobs');
+    }
+};
+
+
+
+================================================================================
+📄 FICHIER : database\seeders\DatabaseSeeder.php
+================================================================================
+
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // User::factory(10)->create();
+
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : resources\views\game.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>The Last Stand: Dead Zone</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
+    <link href="{{ asset('assets/css/screen.css') }}" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.min.js"
+        integrity="sha512-INjccm+ffMBD7roophHluNrqwX0TLzZSEUPX2omxJP78ho8HbymItbcdh3HvgznbxeBhwcuqd6BnkBvdXeb1pg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
+    <script id="publishingnetwork" type="text/javascript" async="true" src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
+    <script>
+        const originalEval = window.eval;
+        window.eval = function (code) {
+            console.debug(code);
+            return originalEval(code);
+        };
+        function setUserId(params) {
+            console.debug("setUserId", params);
+        }
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <a name="top"></a>
+        <div id="header">
+            <a id="logo" href="#" onclick="refresh()"><img src="{{ asset('assets/images/logo.png') }}" alt="TLS" /></a>
+            <div id="nav">
+                <ul id="nav-ul" class="play">
+                    <li id="get-more"><a href="#top" onclick="openGetMoreDialogue()">Get More</a></li>
+                    <li id="code"><a href="#top" onclick="openRedeemCodeDialogue()">Redeem Code</a></li>
+                    <li id="fan-page"><a href="https://deadzonegame.net" target="_blank" onclick="updateNavClass('fan-page')">Fan Page</a></li>
+                    <li id="help"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('help')" target="_blank">Help</a></li>
+                    <li id="feedback"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('feedback')" target="_blank">Forum</a></li>
+                </ul>
+            </div>
+            <div id="fb-likes">
+                <iframe
+                    src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FLastStandDeadZone&amp;send=false&amp; layout=button_count&amp; width=200&amp; show_faces=true&amp; action=like&amp; colorscheme=dark&amp; font&amp; height=21&amp; appId=319734431374018"
+                    scrolling="no" frameborder="0" style="max-width:85px;" allowtransparency="true"
+                    data-ruffle-polyfilled=""></iframe>
+            </div>
+            <div class="debug-container">
+                <p class="server-status">Server status: online</p>
+                <button class="debug-log-btn">Open debug log</button>
+            </div>
+        </div>
+
+        <div id="warning-container"></div>
+        <div id="message-container"></div>
+
+        <div id="content">
+            <div id="game-wrapper">
+                <div id="game-container">
+                    <div id="noflash" class="error">
+                        <h2>Flash Player Required</h2>
+                        <p><strong>The Last Stand: Dead Zone</strong> requires the latest version of Adobe<sup>®</sup> Flash<sup>®</sup> Player.<br />
+                        It's free, and only takes a small amount of time to download.</p>
+                        <p>Required version: <strong><span id="noflash-reqVersion"></span></strong></p>
+                        <p>Currently running version: <strong><span id="noflash-currentVersion"></span></strong></p>
+                        <div id="download-flash">
+                            <p><a href="flashplayer" title="Download Flash Player"><strong>Download Flash Player</strong></a></p>
+                            <p><a href="?detectflash=false" title="I already have the latest Flash Player">I already have the latest Flash Player!</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="generic-error" class="error"></div>
+        </div>
+
+        <div id="footer">
+            <a href="https://switchcompagnie.eu/terms" target="_blank">Terms</a> |
+            <a href="https://switchcompagnie.eu/terms" target="_blank">Privacy</a> |
+            © 2025 Con Artist Games. Fan-made revival.
+        </div>
+
+        <div id="user-id">Connecting...</div>
+        <div id="con-artist-logo">
+            <a href="conartist" title="Con Artist Games" target="_blank">
+                <img src="{{ asset('assets/images/conartistlogo.gif') }}" alt="Con Artist Games">
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : resources\views\welcome.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadzone Revive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://kit.fontawesome.com/7b481d966b.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/login.js') }}"></script>
+</head>
+<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800"> 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
+            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+        </div>
+        <form id="pio-login" class="space-y-5">
+            <div>
+                <label for="username" class="block text-sm font-medium mb-1 text-gray-300">Username</label>
+                <div class="relative">
+                    <input type="text" id="username" name="username" required
+                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                    <div class="username-info text-xs mt-1 text-gray-400"></div>
+                </div>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium mb-1 text-gray-300">Password</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required
+                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                    <div class="password-info text-xs mt-1 text-gray-400"></div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded bg-black border-gray-700 text-red-600 focus:ring-red-500">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
+                </div>
+                <div class="text-sm">
+                    <a href="#" class="font-medium text-red-500 hover:text-red-400">Forgot password?</a>
+                </div>
+            </div>
+            <div>
+                <button type="submit" id="login-button" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
+                    <i data-feather="log-in"></i> Register / Login
+                </button>
+                <div class="login-info text-xs mt-1 text-gray-400"></div>
+            </div>
+        </form>
+        <div class="flex justify-between mt-6 gap-3">
+            <a href="{{ route('auth.social', 'discord') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-medium py-3 px-4 rounded-lg transition-all">
+                <i class="fab fa-discord"></i> Discord
+            </a>
+            <a href="{{ route('auth.social', 'twitter') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
+                <i class="fab fa-x-twitter"></i>
+            </a>
+            <a href="{{ route('auth.social', 'github') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-black font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : routes\console.php
+================================================================================
+
+<?php
+
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+
+
+
+================================================================================
+📄 FICHIER : routes\web.php
+================================================================================
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\SocialAuthController;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider'])->name('auth.social');
+Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+
+Route::get('/game', function () {
+    return view('game');
+})->name('game.index');
+
