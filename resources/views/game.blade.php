@@ -12,16 +12,21 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
-    <script id="publishingnetwork" type="text/javascript" async="true" src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
+    <script id="publishingnetwork" type="text/javascript" async src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
     <script>
-        const originalEval = window.eval;
-        window.eval = function (code) {
-            console.debug(code);
-            return originalEval(code);
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.RufflePlayer.config = {
+            socketProxy: [
+                {
+                    host: "serverlet.deadzonegame.net",
+                    port: 7777,
+                    proxyUrl: "ws://serverlet.deadzonegame.net:8181"
+                }
+            ]
         };
-        function setUserId(params) {
-            console.debug("setUserId", params);
-        }
+        const originalEval = window.eval;
+        window.eval = function (code) { return originalEval(code); };
+        function setUserId(params) { }
     </script>
 </head>
 <body>
@@ -40,9 +45,8 @@
             </div>
             <div id="fb-likes">
                 <iframe
-                    src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FLastStandDeadZone&amp;send=false&amp; layout=button_count&amp; width=200&amp; show_faces=true&amp; action=like&amp; colorscheme=dark&amp; font&amp; height=21&amp; appId=319734431374018"
-                    scrolling="no" frameborder="0" style="max-width:85px;" allowtransparency="true"
-                    data-ruffle-polyfilled=""></iframe>
+                    src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FLastStandDeadZone&send=false&layout=button_count&width=200&show_faces=true&action=like&colorscheme=dark&font&height=21"
+                    scrolling="no" frameborder="0" style="max-width:85px;" allowtransparency="true" data-ruffle-polyfilled=""></iframe>
             </div>
             <div class="debug-container">
                 <p class="server-status">Server status: online</p>
@@ -69,7 +73,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="generic-error" class="error"></div>
         </div>
 

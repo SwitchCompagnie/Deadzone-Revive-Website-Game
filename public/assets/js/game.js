@@ -76,7 +76,7 @@ function startGame(token) {
     const attributes = { id: "game", name: "game" };
 
     $("#game-wrapper").height("0px");
-    embedSWF("http://78.47.120.130:8080/game/preloader.swf", flashVars, params, attributes);
+    embedSWF("https://serverlet.deadzonegame.net/game/preloader.swf", flashVars, params, attributes);
 }
 
 function embedSWF(swfURL, flashVars, params, attributes) {

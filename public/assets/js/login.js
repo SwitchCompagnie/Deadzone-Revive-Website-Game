@@ -1,4 +1,4 @@
-const BASE_URL = 'http://78.47.120.130:8080';
+const BASE_URL = 'https://serverlet.deadzonegame.net';
 let debounceTimeout;
 let usernameTimer;
 let TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000;
