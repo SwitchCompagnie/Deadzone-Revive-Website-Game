@@ -3,7 +3,7 @@ var messages = [];
 var unloadMessage = "";
 var mt = false;
 var mtPST = "00:00";
-const BASE_URL = 'https://serverlet.deadzonegame.net/api/status';
+const STATUS_API = 'https://serverlet.deadzonegame.net/api/status';
 const STATUS_URL = 'https://status.deadzonegame.net';
 
 function updateServerStatus() {
