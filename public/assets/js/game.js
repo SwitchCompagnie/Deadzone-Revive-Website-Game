@@ -3,15 +3,20 @@ var messages = [];
 var unloadMessage = "";
 var mt = false;
 var mtPST = "00:00";
-const BASE_URL = 'https://serverlet.deadzonegame.net';
+const BASE_URL = 'https://serverlet.deadzonegame.net/api/status';
 const STATUS_URL = 'https://status.deadzonegame.net';
 
 function updateServerStatus() {
     const statusElement = $(".server-status");
     statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: N/A</a>`).css("color", "gray");
-    fetch(BASE_URL, { method: 'HEAD' })
+
+    fetch(STATUS_API)
         .then(response => {
-            if (response.ok) {
+            if (!response.ok) throw new Error("Status fetch failed");
+            return response.json();
+        })
+        .then(data => {
+            if (data.status && data.status.toLowerCase() === "online") {
                 statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Online</a>`);
                 statusElement.css("color", "green");
             } else {

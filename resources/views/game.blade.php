@@ -19,7 +19,7 @@
             socketProxy: [
                 {
                     host: "serverlet.deadzonegame.net",
-                    port: 7777,
+                    port: 8181,
                     proxyUrl: "ws://serverlet.deadzonegame.net:8181"
                 }
             ]
