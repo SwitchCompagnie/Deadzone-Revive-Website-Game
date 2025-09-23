@@ -8,7 +8,7 @@ const STATUS_URL = 'https://status.deadzonegame.net';
 
 function updateServerStatus() {
     const statusElement = $(".server-status");
-    statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: N/A</a>`).css("color", "gray");
+    statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: N/A</a>`).css("color", "#808080");
 
     fetch(STATUS_API)
         .then(response => {
@@ -18,15 +18,15 @@ function updateServerStatus() {
         .then(data => {
             if (data.status && data.status.toLowerCase() === "online") {
                 statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Online</a>`);
-                statusElement.css("color", "green");
+                statusElement.css("color", "#28a745");
             } else {
                 statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Offline</a>`);
-                statusElement.css("color", "red");
+                statusElement.css("color", "#dc3545");
             }
         })
         .catch(err => {
             statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Offline</a>`);
-            statusElement.css("color", "red");
+            statusElement.css("color", "#dc3545");
         });
 }
 
