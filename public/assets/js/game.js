@@ -3,18 +3,39 @@ var messages = [];
 var unloadMessage = "";
 var mt = false;
 var mtPST = "00:00";
+const BASE_URL = 'https://serverlet.deadzonegame.net';
+const STATUS_URL = 'https://status.deadzonegame.net';
+
+function updateServerStatus() {
+    const statusElement = $(".server-status");
+    statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: N/A</a>`).css("color", "gray");
+    fetch(BASE_URL, { method: 'HEAD' })
+        .then(response => {
+            if (response.ok) {
+                statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Online</a>`);
+                statusElement.css("color", "green");
+            } else {
+                statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Offline</a>`);
+                statusElement.css("color", "red");
+            }
+        })
+        .catch(err => {
+            statusElement.html(`<a href="${STATUS_URL}" target="_blank">Server Status: Offline</a>`);
+            statusElement.css("color", "red");
+        });
+}
 
 $(document).ready(function () {
+    updateServerStatus();
+    setInterval(updateServerStatus, 60000);
     const urlParams = new URLSearchParams(window.location.search);
     window.token = urlParams.get("token");
-
     if (!window.token) {
         console.warn("No token found. The game cannot start automatically.");
     } else {
         startGame(window.token);
         setInterval(refreshSession, 50 * 60 * 1000);
     }
-
     if (mt) {
         showMaintenanceScreen();
     } else {
@@ -60,7 +81,6 @@ function startGame(token) {
             userAgent: navigator.userAgent,
         },
     };
-
     const params = {
         allowScriptAccess: "always",
         allowFullScreen: "true",
@@ -72,9 +92,7 @@ function startGame(token) {
         wmode: "direct",
         bgColor: "#000000",
     };
-
     const attributes = { id: "game", name: "game" };
-
     $("#game-wrapper").height("0px");
     embedSWF("https://serverlet.deadzonegame.net/game/preloader.swf", flashVars, params, attributes);
 }
@@ -108,16 +126,11 @@ function showNoFlash() {
 }
 
 function showMaintenanceScreen() {
-    var maintenanceMessage =
-        "The Last Stand: Dead Zone is down for scheduled maintenance. ETA " +
-        mtPST +
-        " local time.";
+    var maintenanceMessage = "The Last Stand: Dead Zone is down for scheduled maintenance. ETA " + mtPST + " local time.";
     addMessage("maintenance", maintenanceMessage);
     showError(
         "Scheduled Maintenance",
-        "The Last Stand: Dead Zone is down for scheduled maintenance.<br/>We apologize for any inconvenience.<br/><br/><strong>ETA " +
-            mtPST +
-            " local time</strong>"
+        "The Last Stand: Dead Zone is down for scheduled maintenance.<br/>We apologize for any inconvenience.<br/><br/><strong>ETA " + mtPST + " local time</strong>"
     );
 }
 
@@ -132,9 +145,7 @@ function killGame() {
     $("#game").remove();
     $("#game-container").remove();
     $("#loading").remove();
-    $("#content").prepend(
-        "<div id='messagebox'><div class='header'>Are you there?</div><div class='msg'>You've left your compound unattended for some time. Are you still playing?</div><div class='btn' onclick='refresh()'>BACK TO THE DEAD ZONE</div></div>"
-    );
+    $("#content").prepend("<div id='messagebox'><div class='header'>Are you there?</div><div class='msg'>You've left your compound unattended for some time. Are you still playing?</div><div class='btn' onclick='refresh()'>BACK TO THE DEAD ZONE</div></div>");
 }
 
 function onPreloaderReady() {
@@ -146,11 +157,7 @@ function onFlashHide(c) {
     if (c.state == "opened") {
         var b = document.getElementById("game").getScreenshot();
         if (b != null) {
-            $("#content").append(
-                "<img id='screenshot' style='position:absolute; top:120px; width:960px; height:804px;' src='data:image/jpeg;base64," +
-                    b +
-                    "'/>"
-            );
+            $("#content").append("<img id='screenshot' style='position:absolute; top:120px; width:960px; height:804px;' src='data:image/jpeg;base64," + b + "'/>");
         }
     } else {
         var a = $("#screenshot");
@@ -196,16 +203,7 @@ function removeMessage(c) {
 function parseUTCStrings(a) {
     reg = /\[\%UTC (\d{4})\-(\d{2})\-(\d{2}) (\d{2})\-(\d{2})\]/gi;
     while ((seg = reg.exec(a))) {
-        a = a.replace(
-            seg[0],
-            convertUTCtoLocal(
-                Number(seg[1]),
-                Number(seg[2]),
-                Number(seg[3]),
-                Number(seg[4]),
-                Number(seg[5])
-            )
-        );
+        a = a.replace(seg[0], convertUTCtoLocal(Number(seg[1]), Number(seg[2]), Number(seg[3]), Number(seg[4]), Number(seg[5])));
     }
     reg = /\[\%UTC (\d{2})\-(\d{2})\]/gi;
     while ((seg = reg.exec(a))) {
@@ -228,15 +226,12 @@ function convertUTCtoLocal(c, f, b, a, e) {
     return g;
 }
 
-
 var requestCodeRedeemInterval;
 var waitingForCodeRedeem = false;
 
 function openRedeemCodeDialogue() {
   updateNavClass("code");
-  if (mt || waitingForCodeRedeem) {
-    return;
-  }
+  if (mt || waitingForCodeRedeem) return;
   var a = function () {
     try {
       document.getElementById("game").openRedeemCode();
@@ -247,12 +242,7 @@ function openRedeemCodeDialogue() {
     return false;
   };
   if (!a()) {
-    addMessage(
-      "openingCodeRedeem",
-      "Please wait while the game loads...",
-      false,
-      true
-    );
+    addMessage("openingCodeRedeem","Please wait while the game loads...", false,true);
     waitingForCodeRedeem = true;
     requestCodeRedeemInterval = setInterval(function () {
       if (a()) {
@@ -268,9 +258,7 @@ var waitingForGetMore = false;
 
 function openGetMoreDialogue() {
   updateNavClass("get-more");
-  if (mt || waitingForGetMore) {
-    return;
-  }
+  if (mt || waitingForGetMore) return;
   var a = function () {
     try {
       if (document.getElementById("game").openGetMore()) {
@@ -282,12 +270,7 @@ function openGetMoreDialogue() {
     return false;
   };
   if (!a()) {
-    addMessage(
-      "openingFuel",
-      "Opening Fuel Store, please wait while the game loads...",
-      false,
-      true
-    );
+    addMessage("openingFuel","Opening Fuel Store, please wait while the game loads...", false,true);
     waitingForGetMore = true;
     requestGetMoreInterval = setInterval(function () {
       if (a()) {

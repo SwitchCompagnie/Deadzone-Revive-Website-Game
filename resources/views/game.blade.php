@@ -49,7 +49,7 @@
                     scrolling="no" frameborder="0" style="max-width:85px;" allowtransparency="true" data-ruffle-polyfilled=""></iframe>
             </div>
             <div class="debug-container">
-                <p class="server-status">Server status: online</p>
+                <p class="server-status"><a href="https://status.deadzonegame.net" target="_blank">Server Status: N/A</a></p>
                 <button class="debug-log-btn">Open debug log</button>
             </div>
         </div>
