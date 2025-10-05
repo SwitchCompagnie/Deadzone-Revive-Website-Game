@@ -1,66 +1,190 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Deadzone Revive Website Game
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel-based web platform for the Deadzone project.
 
-## About Laravel
+## How to Set Up (Local Development)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. Install [XAMPP](https://www.apachefriends.org/index.html) or any local PHP server stack (Apache, PHP, MySQL/MariaDB).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+2. Install [Composer](https://getcomposer.org/) — the PHP dependency manager.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3. Clone this repository into your web server root.  
+   Example for XAMPP on Windows:  
+   `C:\xampp\htdocs\deadzone-revive-website`
 
-## Learning Laravel
+4. Start Apache and MySQL/MariaDB from the XAMPP Control Panel.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+5. Open a terminal in the project directory and install dependencies:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+   ```bash
+   composer install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+6. Create a copy of the `.env` file:
 
-## Laravel Sponsors
+   ```bash
+   cp .env.example .env
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   On Windows:
 
-### Premium Partners
+   ```bat
+   copy .env.example .env
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+7. Set up your `.env` with the correct database credentials.  
+   Example config for local MariaDB:
 
-## Contributing
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=deadzone_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+8. Generate the Laravel application key:
 
-## Code of Conduct
+   ```bash
+   php artisan key:generate
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+9. Create the database in phpMyAdmin or any MySQL client (e.g., `deadzone_db`).
 
-## Security Vulnerabilities
+10. Run database migrations:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```bash
+    php artisan migrate
+    ```
 
-## License
+    If you have seeders:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    ```bash
+    php artisan db:seed
+    ```
+
+11. Configure Apache to serve from Laravel’s `public/` folder:
+
+    - Edit your Apache config or VirtualHost (e.g., in `httpd-vhosts.conf`)
+    - Example:
+
+      ```apache
+      <VirtualHost *:80>
+          DocumentRoot "C:/xampp/htdocs/deadzone-revive-website/public"
+          ServerName localhost
+
+          <Directory "C:/xampp/htdocs/deadzone-revive-website/public">
+              AllowOverride All
+              Require all granted
+          </Directory>
+      </VirtualHost>
+      ```
+
+    - Don’t forget to restart Apache after changes.
+
+12. Visit the app in your browser:
+
+    ```
+    http://localhost
+    ```
+
+👉 Join our [Discord](https://discord.gg/jFyAePxDBJ) for support or questions.
+
+---
+
+## Development
+
+### Requirements
+
+- PHP
+- Composer
+- MariaDB (MySQL also supported)
+- Apache (or Nginx)
+
+### File Structure
+
+Key Laravel project structure:
+
+```
+app/           # Application logic
+config/        # Configuration files
+database/      # Migrations and seeders
+public/        # Web root (served by Apache)
+resources/     # Views, assets
+routes/        # Route definitions
+.env           # Environment config
+```
+
+### Social Login Setup
+
+You can configure OAuth login for Discord, Twitter, and GitHub in your `.env` file:
+
+```env
+# Discord OAuth
+DISCORD_CLIENT_ID=your_discord_id
+DISCORD_CLIENT_SECRET=your_discord_secret
+DISCORD_REDIRECT=http://localhost/auth/discord/callback
+
+# Twitter OAuth
+TWITTER_CLIENT_ID=your_twitter_id
+TWITTER_CLIENT_SECRET=your_twitter_secret
+TWITTER_REDIRECT=http://localhost/auth/twitter/callback
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret
+GITHUB_REDIRECT=http://localhost/auth/github/callback
+```
+
+Make sure these routes exist in your app and are correctly handled in your auth controller or service.
+
+---
+
+## Useful Commands
+
+```bash
+# Clear config/cache
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+
+# Re-run migrations
+php artisan migrate:fresh --seed
+```
+
+---
+
+## Common Issues
+
+- **Blank page or 500 error**  
+  → Check `storage/logs/` for Laravel error logs.  
+  → Ensure `storage/` and `bootstrap/cache/` folders are writable.
+
+- **MySQL connection error**  
+  → Verify `.env` DB credentials match your local setup.  
+  → Ensure MySQL is running.
+
+- **"Could not find driver"**  
+  → Enable `pdo_mysql` in your `php.ini`.
+
+- **Routes not working**  
+  → Ensure `mod_rewrite` is enabled in Apache.  
+  → `.htaccess` in the `public/` folder must be active.
+
+---
+
+## Summary Quick Setup
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+```
+
+Then access it via:  
+👉 `http://localhost` (Apache must point to `/public`)
+
+---
