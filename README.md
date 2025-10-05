@@ -36,7 +36,7 @@ Laravel-based web platform for the Deadzone project.
    Example config for local MariaDB:
 
    ```env
-   DB_CONNECTION=mysql
+   DB_CONNECTION=mariadb
    DB_HOST=127.0.0.1
    DB_PORT=3306
    DB_DATABASE=deadzone_db
