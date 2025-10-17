@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>The Last Stand: Dead Zone</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
     <link href="{{ asset('assets/css/screen.css') }}" rel="stylesheet" type="text/css" />
@@ -13,21 +13,6 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
     <script id="publishingnetwork" type="text/javascript" async src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
-    <script>
-        window.RufflePlayer = window.RufflePlayer || {};
-        window.RufflePlayer.config = {
-            socketProxy: [
-                {
-                    host: "serverlet.deadzonegame.net",
-                    port: 8181,
-                    proxyUrl: "ws://serverlet.deadzonegame.net:8181"
-                }
-            ]
-        };
-        const originalEval = window.eval;
-        window.eval = function (code) { return originalEval(code); };
-        function setUserId(params) { }
-    </script>
 </head>
 <body>
     <div id="wrapper">
