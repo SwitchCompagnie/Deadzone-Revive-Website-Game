@@ -75,7 +75,7 @@
             <button disabled
                 class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-medium py-3 px-4 rounded-lg cursor-not-allowed opacity-50 transition-all">
                 <img src="{{ asset('assets/images/greenspirits.svg') }}" alt="Green Spirit Icon" class="h-6 w-6">
-                Green Spirit [SOON]
+                Spirit Account [SOON]
             </button>
         </div>
     </div>
