@@ -45,6 +45,11 @@ class SocialAuthController extends Controller
 
         Auth::login($user, true);
 
+        if (!$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
+        }
+
         return redirect('/game?token=' . $data['token']);
     }
 

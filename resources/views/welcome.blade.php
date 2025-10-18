@@ -8,6 +8,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://kit.fontawesome.com/7b481d966b.js" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ asset('assets/js/login.js') }}"></script>
+    @if (env('TURNSTILE_ENABLED', false))
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    @endif
 </head>
 <body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
     <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800"> 
@@ -27,7 +30,8 @@
             <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
             <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
         </div>
-        <form id="pio-login" class="space-y-5">
+        <form id="pio-login" action="{{ route('login') }}" method="POST" class="space-y-5">
+            @csrf
             <div>
                 <label for="username" class="block text-sm font-medium mb-1 text-gray-300">Username</label>
                 <div class="relative">
@@ -44,13 +48,18 @@
                     <div class="password-info text-xs mt-1 text-gray-400"></div>
                 </div>
             </div>
+            @if (env('TURNSTILE_ENABLED', false))
+                <div class="flex justify-center">
+                    <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITEKEY') }}"></div>
+                </div>
+            @endif
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded bg-black border-gray-700 text-red-600 focus:ring-red-500">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded bg-black border border-gray-700 text-red-600 focus:ring-red-500 appearance-none checked:bg-red-600 checked:border-red-600 relative cursor-pointer before:content-[''] before:absolute before:inset-0 before:rounded before:bg-red-600 before:scale-0 checked:before:scale-100 before:transition-transform before:duration-200 before:flex before:items-center before:justify-center before:text-white before:text-xs before:font-bold before:content-['✓']">
                     <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
                 </div>
                 <div class="text-sm">
-                    <a href="#" class="font-medium text-red-500 hover:text-red-400">Forgot password?</a>
+                    <a href="{{ route('password.request') }}" class="font-medium text-red-500 hover:text-red-400">Forgot password?</a>
                 </div>
             </div>
             <div>
@@ -58,6 +67,16 @@
                     <i data-feather="log-in"></i> Register / Login
                 </button>
                 <div class="login-info text-xs mt-1 text-gray-400"></div>
+                @if (session('status'))
+                    <div class="text-green-500 text-xs mt-2 text-center">{{ session('status') }}</div>
+                @endif
+                @if ($errors->has('captcha') || $errors->has('login') || $errors->has('email'))
+                    <div class="text-red-500 text-xs mt-2 text-center">
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}<br>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </form>
         <div class="flex justify-between mt-6 gap-3">
