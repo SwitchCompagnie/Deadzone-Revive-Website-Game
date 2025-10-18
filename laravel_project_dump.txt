@@ -1,0 +1,2684 @@
+
+================================================================================
+📄 FICHIER : .env
+================================================================================
+
+APP_NAME=Deadzone-Revive-Website-Game
+APP_ENV=production
+APP_KEY=base64:ExeRwRauhNdCwmuXAw9Pt7mUe7E4donFnN4D9elCegY=
+APP_DEBUG=false
+APP_URL=https://game.deadzonegame.net
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+# APP_MAINTENANCE_STORE=database
+
+PHP_CLI_SERVER_WORKERS=4
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mariadb
+DB_HOST=46.62.171.228
+DB_PORT=3306
+DB_DATABASE=prod_deadzone_game
+DB_USERNAME=prod_deadzone_serverlet
+DB_PASSWORD=HMz33lJdPEyMSPdJ5cGEZKf3PXQgLQhJNZYQAvvXDHbvhjQMya4DNGVybLBsF7qA3zl18Hdf2dBpoIob
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+# CACHE_PREFIX=
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=deadzonegame.net
+MAIL_PORT=465
+MAIL_USERNAME=support@deadzonegame.net
+MAIL_PASSWORD=peiHRsPbirexIBWOv6H0z7cz6uKaUrmHc7CJEgcVysmJgAYYp8xDhpuRbIeJSKC60g8yP2dHdxPLTtJSk40x10b4X3kuFpbUVJFPefkSerPAZeAziOXb3FUmOcVfVX6d
+MAIL_ENCRYPTION=smtps
+MAIL_FROM_ADDRESS="support@deadzonegame.net"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+
+DISCORD_CLIENT_ID=1322661381513674802
+DISCORD_CLIENT_SECRET=Xllnwl4eNmYDoLXPW7aDOPn8TcMLJ-OI
+DISCORD_REDIRECT=https://game.deadzonegame.net/auth/discord/callback
+
+TWITTER_CLIENT_ID=SAJ9xXITeVbwvRJ9e2Hqmly8Q
+TWITTER_CLIENT_SECRET=Mnr6EauuM4M3a7oXK1iIhzsgP2dfQLDmOYd59axdVxNNRGjM6r
+TWITTER_REDIRECT=https://game.deadzonegame.net/auth/twitter/callback
+
+GITHUB_CLIENT_ID=Ov23liklREEIlTiH0kEm
+GITHUB_CLIENT_SECRET=db3c5ed0397b45a8864d658ad5a87db87aaaf6b0
+GITHUB_REDIRECT=https://game.deadzonegame.net/auth/github/callback
+
+API_BASE_URL=https://serverlet.deadzonegame.net
+
+TURNSTILE_ENABLED=true
+TURNSTILE_SITEKEY=0x4AAAAAAB7SXFT2LjvMGfx-
+TURNSTILE_SECRET=0x4AAAAAAB7SXNnKsjhF9nkAEhbHc-YkgpM
+
+
+================================================================================
+📄 FICHIER : composer.json
+================================================================================
+
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "~4.0",
+        "laravel/framework": "^12.0",
+        "laravel/socialite": "^5.23",
+        "laravel/tinker": "^2.10.1",
+        "socialiteproviders/discord": "^4.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.41",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^11.5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "12.x-dev"
+        },
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Pages\Dashboard.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Pages;
+
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Widgets\StatsOverviewWidget;
+use BackedEnum;
+
+class Dashboard extends BaseDashboard
+{
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-home';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\UserStatsWidget::class,
+            \App\Filament\Widgets\PlayerAccountStatsWidget::class,
+            \App\Filament\Widgets\UserRegistrationChart::class,
+        ];
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Inventories\InventoryResource.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Inventories;
+
+use App\Filament\Resources\Inventories\Pages\CreateInventory;
+use App\Filament\Resources\Inventories\Pages\EditInventory;
+use App\Filament\Resources\Inventories\Pages\ListInventories;
+use App\Filament\Resources\Inventories\Schemas\InventoryForm;
+use App\Filament\Resources\Inventories\Tables\InventoriesTable;
+use App\Models\Inventory;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class InventoryResource extends Resource
+{
+    protected static ?string $model = Inventory::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return InventoryForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return InventoriesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListInventories::route('/'),
+            'create' => CreateInventory::route('/create'),
+            'edit' => EditInventory::route('/{record}/edit'),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Inventories\Pages\CreateInventory.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Inventories\Pages;
+
+use App\Filament\Resources\Inventories\InventoryResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateInventory extends CreateRecord
+{
+    protected static string $resource = InventoryResource::class;
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Inventories\Pages\EditInventory.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Inventories\Pages;
+
+use App\Filament\Resources\Inventories\InventoryResource;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditInventory extends EditRecord
+{
+    protected static string $resource = InventoryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Inventories\Pages\ListInventories.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Inventories\Pages;
+
+use App\Filament\Resources\Inventories\InventoryResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+class ListInventories extends ListRecords
+{
+    protected static string $resource = InventoryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Inventories\Schemas\InventoryForm.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Inventories\Schemas;
+
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class InventoryForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Textarea::make('data_json')
+                    ->required()
+                    ->columnSpanFull(),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Inventories\Tables\InventoriesTable.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Inventories\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class InventoriesTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('player_id')
+                    ->searchable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\NeighborHistories\NeighborHistoryResource.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\NeighborHistories;
+
+use App\Filament\Resources\NeighborHistories\Pages\CreateNeighborHistory;
+use App\Filament\Resources\NeighborHistories\Pages\EditNeighborHistory;
+use App\Filament\Resources\NeighborHistories\Pages\ListNeighborHistories;
+use App\Filament\Resources\NeighborHistories\Schemas\NeighborHistoryForm;
+use App\Filament\Resources\NeighborHistories\Tables\NeighborHistoriesTable;
+use App\Models\NeighborHistory;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class NeighborHistoryResource extends Resource
+{
+    protected static ?string $model = NeighborHistory::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return NeighborHistoryForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return NeighborHistoriesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListNeighborHistories::route('/'),
+            'create' => CreateNeighborHistory::route('/create'),
+            'edit' => EditNeighborHistory::route('/{record}/edit'),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\NeighborHistories\Pages\CreateNeighborHistory.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\NeighborHistories\Pages;
+
+use App\Filament\Resources\NeighborHistories\NeighborHistoryResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateNeighborHistory extends CreateRecord
+{
+    protected static string $resource = NeighborHistoryResource::class;
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\NeighborHistories\Pages\EditNeighborHistory.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\NeighborHistories\Pages;
+
+use App\Filament\Resources\NeighborHistories\NeighborHistoryResource;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditNeighborHistory extends EditRecord
+{
+    protected static string $resource = NeighborHistoryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\NeighborHistories\Pages\ListNeighborHistories.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\NeighborHistories\Pages;
+
+use App\Filament\Resources\NeighborHistories\NeighborHistoryResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+class ListNeighborHistories extends ListRecords
+{
+    protected static string $resource = NeighborHistoryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\NeighborHistories\Schemas\NeighborHistoryForm.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\NeighborHistories\Schemas;
+
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class NeighborHistoryForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Textarea::make('data_json')
+                    ->required()
+                    ->columnSpanFull(),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\NeighborHistories\Tables\NeighborHistoriesTable.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\NeighborHistories\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class NeighborHistoriesTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('player_id')
+                    ->searchable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerAccounts\PlayerAccountResource.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerAccounts;
+
+use App\Filament\Resources\PlayerAccounts\Pages\CreatePlayerAccount;
+use App\Filament\Resources\PlayerAccounts\Pages\EditPlayerAccount;
+use App\Filament\Resources\PlayerAccounts\Pages\ListPlayerAccounts;
+use App\Filament\Resources\PlayerAccounts\Schemas\PlayerAccountForm;
+use App\Filament\Resources\PlayerAccounts\Tables\PlayerAccountsTable;
+use App\Models\PlayerAccount;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class PlayerAccountResource extends Resource
+{
+    protected static ?string $model = PlayerAccount::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return PlayerAccountForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PlayerAccountsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPlayerAccounts::route('/'),
+            'create' => CreatePlayerAccount::route('/create'),
+            'edit' => EditPlayerAccount::route('/{record}/edit'),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerAccounts\Pages\CreatePlayerAccount.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerAccounts\Pages;
+
+use App\Filament\Resources\PlayerAccounts\PlayerAccountResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePlayerAccount extends CreateRecord
+{
+    protected static string $resource = PlayerAccountResource::class;
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerAccounts\Pages\EditPlayerAccount.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerAccounts\Pages;
+
+use App\Filament\Resources\PlayerAccounts\PlayerAccountResource;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditPlayerAccount extends EditRecord
+{
+    protected static string $resource = PlayerAccountResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerAccounts\Pages\ListPlayerAccounts.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerAccounts\Pages;
+
+use App\Filament\Resources\PlayerAccounts\PlayerAccountResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+class ListPlayerAccounts extends ListRecords
+{
+    protected static string $resource = PlayerAccountResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerAccounts\Schemas\PlayerAccountForm.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerAccounts\Schemas;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class PlayerAccountForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Textarea::make('hashed_password')
+                    ->required()
+                    ->columnSpanFull(),
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->required(),
+                TextInput::make('display_name')
+                    ->required(),
+                TextInput::make('avatar_url')
+                    ->url()
+                    ->required(),
+                TextInput::make('last_login')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('country_code')
+                    ->default(null),
+                Textarea::make('server_metadata_json')
+                    ->required()
+                    ->columnSpanFull(),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerAccounts\Tables\PlayerAccountsTable.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerAccounts\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class PlayerAccountsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('player_id')
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->searchable(),
+                TextColumn::make('display_name')
+                    ->searchable(),
+                TextColumn::make('avatar_url')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('last_login')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('country_code')
+                    ->searchable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerObjects\PlayerObjectResource.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerObjects;
+
+use App\Filament\Resources\PlayerObjects\Pages\CreatePlayerObject;
+use App\Filament\Resources\PlayerObjects\Pages\EditPlayerObject;
+use App\Filament\Resources\PlayerObjects\Pages\ListPlayerObjects;
+use App\Filament\Resources\PlayerObjects\Schemas\PlayerObjectForm;
+use App\Filament\Resources\PlayerObjects\Tables\PlayerObjectsTable;
+use App\Models\PlayerObject;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class PlayerObjectResource extends Resource
+{
+    protected static ?string $model = PlayerObject::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return PlayerObjectForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PlayerObjectsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPlayerObjects::route('/'),
+            'create' => CreatePlayerObject::route('/create'),
+            'edit' => EditPlayerObject::route('/{record}/edit'),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerObjects\Pages\CreatePlayerObject.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerObjects\Pages;
+
+use App\Filament\Resources\PlayerObjects\PlayerObjectResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePlayerObject extends CreateRecord
+{
+    protected static string $resource = PlayerObjectResource::class;
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerObjects\Pages\EditPlayerObject.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerObjects\Pages;
+
+use App\Filament\Resources\PlayerObjects\PlayerObjectResource;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditPlayerObject extends EditRecord
+{
+    protected static string $resource = PlayerObjectResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerObjects\Pages\ListPlayerObjects.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerObjects\Pages;
+
+use App\Filament\Resources\PlayerObjects\PlayerObjectResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+class ListPlayerObjects extends ListRecords
+{
+    protected static string $resource = PlayerObjectResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerObjects\Schemas\PlayerObjectForm.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerObjects\Schemas;
+
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Schema;
+
+class PlayerObjectForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Textarea::make('data_json')
+                    ->required()
+                    ->columnSpanFull(),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\PlayerObjects\Tables\PlayerObjectsTable.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\PlayerObjects\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class PlayerObjectsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('player_id')
+                    ->searchable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Users\UserResource.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Users;
+
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Filament\Resources\Users\Schemas\UserForm;
+use App\Filament\Resources\Users\Tables\UsersTable;
+use App\Models\User;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class UserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return UserForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return UsersTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Users\Pages\CreateUser.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Users\UserResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateUser extends CreateRecord
+{
+    protected static string $resource = UserResource::class;
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Users\Pages\EditUser.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Users\UserResource;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditUser extends EditRecord
+{
+    protected static string $resource = UserResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Users\Pages\ListUsers.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Users\UserResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+class ListUsers extends ListRecords
+{
+    protected static string $resource = UserResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Users\Schemas\UserForm.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Users\Schemas;
+
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+
+class UserForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required(),
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->default(null),
+                DateTimePicker::make('email_verified_at'),
+                TextInput::make('password')
+                    ->password()
+                    ->required(),
+                TextInput::make('discord_id')
+                    ->default(null),
+                TextInput::make('twitter_id')
+                    ->default(null),
+                TextInput::make('github_id')
+                    ->default(null),
+                Toggle::make('is_admin')
+                    ->default(false),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Resources\Users\Tables\UsersTable.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Resources\Users\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Table;
+
+class UsersTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->searchable(),
+                TextColumn::make('email_verified_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('discord_id')
+                    ->searchable(),
+                TextColumn::make('twitter_id')
+                    ->searchable(),
+                TextColumn::make('github_id')
+                    ->searchable(),
+                ToggleColumn::make('is_admin'),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Filament\Widgets\PlayerAccountStatsWidget.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\PlayerAccount;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+class PlayerAccountStatsWidget extends BaseWidget
+{
+    protected function getStats(): array
+    {
+        $recentLogins = PlayerAccount::where('last_login', '>=', now()->subDays(7)->timestamp)->count();
+        $topCountry = PlayerAccount::groupBy('country_code')
+            ->selectRaw('country_code, COUNT(*) as total')
+            ->orderBy('total', 'desc')
+            ->first();
+
+        return [
+            Stat::make('Total Player Accounts', PlayerAccount::count())
+                ->description('Total number of player accounts')
+                ->icon('heroicon-o-user-group')
+                ->color('primary'),
+            Stat::make('Recent Logins (7 days)', $recentLogins)
+                ->description('Logins in the last 7 days')
+                ->icon('heroicon-o-clock')
+                ->color('info'),
+            Stat::make('Top Country', $topCountry ? ($topCountry->country_code ?? 'N/A') : 'N/A')
+                ->description($topCountry ? "{$topCountry->total} players" : 'No players')
+                ->icon('heroicon-o-globe-alt')
+                ->color('success'),
+        ];
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Filament\Widgets\UserRegistrationChart.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\User;
+use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\DB;
+
+class UserRegistrationChart extends ChartWidget
+{
+    protected ?string $heading = 'User Registrations per Month';
+
+    protected function getData(): array
+    {
+        $data = User::select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('COUNT(*) as count'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        return [
+            'labels' => $data->pluck('month')->toArray(),
+            'datasets' => [
+                [
+                    'label' => 'New Users',
+                    'data' => $data->pluck('count')->toArray(),
+                    'backgroundColor' => '#3b82f6',
+                    'borderColor' => '#1d4ed8',
+                ],
+            ],
+        ];
+    }
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Filament\Widgets\UserStatsWidget.php
+================================================================================
+
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\User;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+class UserStatsWidget extends BaseWidget
+{
+    protected function getStats(): array
+    {
+        return [
+            Stat::make('Total Users', User::count())
+                ->description('Total registered users')
+                ->icon('heroicon-o-users')
+                ->color('primary'),
+            Stat::make('Admin Users', User::where('is_admin', true)->count())
+                ->description('Number of administrators')
+                ->icon('heroicon-o-shield-check')
+                ->color('warning'),
+            Stat::make('Verified Emails', User::whereNotNull('email_verified_at')->count())
+                ->description('Users with verified email')
+                ->icon('heroicon-o-check-circle')
+                ->color('success'),
+        ];
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Http\Controllers\AuthController.php
+================================================================================
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use App\Models\User;
+use Illuminate\Support\Facades\Password;
+
+class AuthController extends Controller
+{
+    public function login(Request $request)
+    {
+        $rules = [
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ];
+
+        if (env('TURNSTILE_ENABLED', false)) {
+            $rules['cf-turnstile-response'] = 'required|string';
+        }
+
+        $request->validate($rules);
+
+        if (env('TURNSTILE_ENABLED', false)) {
+            $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => env('TURNSTILE_SECRET'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (!$turnstileResponse->json()['success']) {
+                return back()->withErrors(['captcha' => 'Captcha validation failed.']);
+            }
+        }
+
+        $apiResponse = Http::post(env('API_BASE_URL') . '/api/login', [
+            'username' => $request->username,
+            'password' => $request->password,
+        ]);
+
+        if (!$apiResponse->ok()) {
+            $error = $apiResponse->json();
+            return back()->withErrors(['login' => $error['reason'] ?? 'Login failed']);
+        }
+
+        $data = $apiResponse->json();
+        if (!isset($data['token'])) {
+            return back()->withErrors(['login' => 'Invalid response from API']);
+        }
+
+        $user = User::updateOrCreate(
+            ['name' => $request->username],
+            ['password' => bcrypt($request->password)]
+        );
+
+        Auth::login($user, $request->boolean('remember-me'));
+
+        if (!$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
+        }
+
+        return redirect('/game?token=' . $data['token']);
+    }
+
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $rules = [
+            'email' => 'required|email',
+        ];
+
+        if (env('TURNSTILE_ENABLED', false)) {
+            $rules['cf-turnstile-response'] = 'required|string';
+        }
+
+        $request->validate($rules);
+
+        if (env('TURNSTILE_ENABLED', false)) {
+            $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => env('TURNSTILE_SECRET'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (!$turnstileResponse->json()['success']) {
+                return back()->withErrors(['captcha' => 'Captcha validation failed.']);
+            }
+        }
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function showResetPasswordForm($token)
+    {
+        return view('auth.reset-password', ['token' => $token]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $rules = [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ];
+
+        if (env('TURNSTILE_ENABLED', false)) {
+            $rules['cf-turnstile-response'] = 'required|string';
+        }
+
+        $request->validate($rules);
+
+        if (env('TURNSTILE_ENABLED', false)) {
+            $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => env('TURNSTILE_SECRET'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (!$turnstileResponse->json()['success']) {
+                return back()->withErrors(['captcha' => 'Captcha validation failed.']);
+            }
+        }
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => bcrypt($password)
+                ])->save();
+
+                $apiResponse = Http::post(env('API_BASE_URL') . '/api/update-password', [
+                    'username' => $user->name,
+                    'password' => $password,
+                ]);
+
+                if (!$apiResponse->ok()) {
+                    throw new \Exception('Failed to update password in external API');
+                }
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Http\Controllers\Controller.php
+================================================================================
+
+<?php
+
+namespace App\Http\Controllers;
+
+abstract class Controller
+{
+    //
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Http\Controllers\SocialAuthController.php
+================================================================================
+
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
+use Illuminate\Support\Facades\Http;
+
+class SocialAuthController extends Controller
+{
+    public function redirectToProvider($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    public function handleProviderCallback($provider)
+    {
+        $socialUser = Socialite::driver($provider)->user();
+        $username = $this->generateUniqueUsername($socialUser, $provider);
+        $password = Str::random(16);
+
+        $response = Http::post(env('API_BASE_URL') . '/api/login', [
+            'username' => $username,
+            'password' => $password,
+        ]);
+
+        if (!$response->ok()) {
+            $error = $response->json();
+            return redirect('/')->with('error', $error['reason'] ?? 'Social login failed');
+        }
+
+        $data = $response->json();
+        if (!isset($data['token'])) {
+            return redirect('/')->with('error', 'Invalid response from API');
+        }
+
+        $user = User::updateOrCreate(
+            ['email' => $socialUser->getEmail() ?? $socialUser->getId() . '@' . $provider . '.com'],
+            [
+                'name' => $username,
+                'password' => bcrypt($password),
+                $provider . '_id' => $socialUser->getId(),
+            ]
+        );
+
+        Auth::login($user, true);
+
+        if (!$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
+        }
+
+        return redirect('/game?token=' . $data['token']);
+    }
+
+    private function generateUniqueUsername($socialUser, $provider)
+    {
+        $baseUsername = $socialUser->getNickname() ?? Str::slug($socialUser->getName() ?? 'user');
+        $username = $baseUsername;
+        $counter = 1;
+
+        while (User::where('name', $username)->exists()) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
+        $badwords = ['dick'];
+        if (in_array(strtolower($username), $badwords)) {
+            $username = 'user' . Str::random(6);
+        }
+
+        $response = Http::get(env('API_BASE_URL') . '/api/userexist?username=' . urlencode($username));
+        if ($response->ok() && $response->body() === 'yes') {
+            $username = $baseUsername . $counter;
+            $counter++;
+            while ($response->ok() && $response->body() === 'yes') {
+                $username = $baseUsername . $counter;
+                $response = Http::get(env('API_BASE_URL') . '/api/userexist?username=' . urlencode($username));
+                $counter++;
+            }
+        }
+
+        return $username;
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Models\Inventory.php
+================================================================================
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Inventory extends Model
+{
+    protected $table = 'inventory';
+    protected $primaryKey = 'player_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'player_id',
+        'data_json'
+    ];
+
+    protected $casts = [
+        'data_json' => 'array'
+    ];
+
+    public function player()
+    {
+        return $this->belongsTo(PlayerAccount::class, 'player_id', 'player_id');
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Models\NeighborHistory.php
+================================================================================
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class NeighborHistory extends Model
+{
+    protected $table = 'neighbor_history';
+    protected $primaryKey = 'player_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'player_id',
+        'data_json'
+    ];
+
+    protected $casts = [
+        'data_json' => 'array'
+    ];
+
+    public function player()
+    {
+        return $this->belongsTo(PlayerAccount::class, 'player_id', 'player_id');
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Models\PlayerAccount.php
+================================================================================
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PlayerAccount extends Model
+{
+    protected $table = 'player_accounts';
+    protected $primaryKey = 'player_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'player_id',
+        'hashed_password',
+        'email',
+        'display_name',
+        'avatar_url',
+        'created_at',
+        'last_login',
+        'country_code',
+        'server_metadata_json'
+    ];
+
+    protected $casts = [
+        'created_at' => 'integer',
+        'last_login' => 'integer',
+        'server_metadata_json' => 'array'
+    ];
+
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'player_id', 'player_id');
+    }
+
+    public function playerObjects()
+    {
+        return $this->hasOne(PlayerObject::class, 'player_id', 'player_id');
+    }
+
+    public function neighborHistory()
+    {
+        return $this->hasOne(NeighborHistory::class, 'player_id', 'player_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($player) {
+            $player->inventory()->delete();
+            $player->neighborHistory()->delete();
+            $player->playerObjects()->delete();
+        });
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Models\PlayerObject.php
+================================================================================
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PlayerObject extends Model
+{
+    protected $table = 'player_objects';
+    protected $primaryKey = 'player_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'player_id',
+        'data_json'
+    ];
+
+    protected $casts = [
+        'data_json' => 'array'
+    ];
+
+    public function player()
+    {
+        return $this->belongsTo(PlayerAccount::class, 'player_id', 'player_id');
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Models\User.php
+================================================================================
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+{
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'discord_id',
+        'twitter_id',
+        'github_id',
+        'is_admin',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_admin' => 'boolean',
+    ];
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->is_admin;
+    }
+}
+
+
+================================================================================
+📄 FICHIER : app\Providers\AppServiceProvider.php
+================================================================================
+
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Discord\DiscordExtendSocialite;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        $this->app['events']->listen(
+            SocialiteWasCalled::class,
+            DiscordExtendSocialite::class
+        );
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : app\Providers\Filament\AdminPanelProvider.php
+================================================================================
+
+<?php
+
+namespace App\Providers\Filament;
+
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\FilamentInfoWidget;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->login()
+            ->colors([
+                'primary' => Color::Amber,
+            ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->pages([
+                Dashboard::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->widgets([
+                AccountWidget::class,
+                FilamentInfoWidget::class,
+            ])
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : database\factories\UserFactory.php
+================================================================================
+
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ */
+class UserFactory extends Factory
+{
+    /**
+     * The current password being used by the factory.
+     */
+    protected static ?string $password;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => static::$password ??= Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ];
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email_verified_at' => null,
+        ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : database\migrations\0001_01_01_000000_create_sessions_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id', 255)->primary();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sessions');
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\migrations\0001_01_01_000001_create_cache_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('cache', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
+        Schema::create('cache_locks', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('cache');
+        Schema::dropIfExists('cache_locks');
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\migrations\0001_01_01_000002_create_jobs_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('queue')->index();
+            $table->longText('payload');
+            $table->unsignedTinyInteger('attempts');
+            $table->unsignedInteger('reserved_at')->nullable();
+            $table->unsignedInteger('available_at');
+            $table->unsignedInteger('created_at');
+        });
+
+        Schema::create('job_batches', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->integer('total_jobs');
+            $table->integer('pending_jobs');
+            $table->integer('failed_jobs');
+            $table->longText('failed_job_ids');
+            $table->mediumText('options')->nullable();
+            $table->integer('cancelled_at')->nullable();
+            $table->integer('created_at');
+            $table->integer('finished_at')->nullable();
+        });
+
+        Schema::create('failed_jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('uuid')->unique();
+            $table->text('connection');
+            $table->text('queue');
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('jobs');
+        Schema::dropIfExists('job_batches');
+        Schema::dropIfExists('failed_jobs');
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\migrations\2025_09_20_000003_create_users_table.php
+================================================================================
+
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('email')->unique()->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->string('discord_id')->nullable()->unique();
+            $table->string('twitter_id')->nullable()->unique();
+            $table->string('github_id')->nullable()->unique();
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('users');
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\migrations\2025_10_17_000004_add_is_admin_to_users_table.php
+================================================================================
+
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('is_admin')->default(false)->after('github_id');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_admin');
+        });
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\migrations\2025_10_18_000005_create_password_reset_tokens_table.php
+================================================================================
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('password_reset_tokens');
+    }
+};
+
+
+================================================================================
+📄 FICHIER : database\seeders\DatabaseSeeder.php
+================================================================================
+
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // User::factory(10)->create();
+
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+    }
+}
+
+
+
+================================================================================
+📄 FICHIER : resources\views\game.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>The Last Stand: Dead Zone</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
+    <link href="{{ asset('assets/css/screen.css') }}" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.min.js"
+        integrity="sha512-INjccm+ffMBD7roophHluNrqwX0TLzZSEUPX2omxJP78ho8HbymItbcdh3HvgznbxeBhwcuqd6BnkBvdXeb1pg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
+    <script id="publishingnetwork" type="text/javascript" async src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <a name="top"></a>
+        <div id="header">
+            <a id="logo" href="#" onclick="refresh()"><img src="{{ asset('assets/images/logo.png') }}" alt="TLS" /></a>
+            <div id="nav">
+                <ul id="nav-ul" class="play">
+                    <li id="get-more"><a href="#top" onclick="openGetMoreDialogue()">Get More</a></li>
+                    <li id="code"><a href="#top" onclick="openRedeemCodeDialogue()">Redeem Code</a></li>
+                    <li id="fan-page"><a href="https://deadzonegame.net" target="_blank" onclick="updateNavClass('fan-page')">Fan Page</a></li>
+                    <li id="help"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('help')" target="_blank">Help</a></li>
+                    <li id="feedback"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('feedback')" target="_blank">Forum</a></li>
+                </ul>
+            </div>
+            <div id="fb-likes">
+                <iframe
+                    src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FLastStandDeadZone&send=false&layout=button_count&width=200&show_faces=true&action=like&colorscheme=dark&font&height=21"
+                    scrolling="no" frameborder="0" style="max-width:85px;" allowtransparency="true" data-ruffle-polyfilled=""></iframe>
+            </div>
+            <div class="debug-container">
+                <p class="server-status"><a href="https://status.deadzonegame.net" target="_blank">Server Status: N/A</a></p>
+                <button class="debug-log-btn">Open debug log</button>
+            </div>
+        </div>
+
+        <div id="warning-container"></div>
+        <div id="message-container"></div>
+
+        <div id="content">
+            <div id="game-wrapper">
+                <div id="game-container">
+                    <div id="noflash" class="error">
+                        <h2>Flash Player Required</h2>
+                        <p><strong>The Last Stand: Dead Zone</strong> requires the latest version of Adobe<sup>®</sup> Flash<sup>®</sup> Player.<br />
+                        It's free, and only takes a small amount of time to download.</p>
+                        <p>Required version: <strong><span id="noflash-reqVersion"></span></strong></p>
+                        <p>Currently running version: <strong><span id="noflash-currentVersion"></span></strong></p>
+                        <div id="download-flash">
+                            <p><a href="flashplayer" title="Download Flash Player"><strong>Download Flash Player</strong></a></p>
+                            <p><a href="?detectflash=false" title="I already have the latest Flash Player">I already have the latest Flash Player!</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="generic-error" class="error"></div>
+        </div>
+
+        <div id="footer">
+            <a href="https://switchcompagnie.eu/terms" target="_blank">Terms</a> |
+            <a href="https://switchcompagnie.eu/terms" target="_blank">Privacy</a> |
+            © 2025 Con Artist Games. Fan-made revival.
+        </div>
+
+        <div id="user-id">Connecting...</div>
+        <div id="con-artist-logo">
+            <a href="conartist" title="Con Artist Games" target="_blank">
+                <img src="{{ asset('assets/images/conartistlogo.gif') }}" alt="Con Artist Games">
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : resources\views\welcome.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadzone Revive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://kit.fontawesome.com/7b481d966b.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/login.js') }}"></script>
+    @if (env('TURNSTILE_ENABLED', false))
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    @endif
+</head>
+<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800"> 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
+            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+        </div>
+        <form id="pio-login" action="{{ route('login') }}" method="POST" class="space-y-5">
+            @csrf
+            <div>
+                <label for="username" class="block text-sm font-medium mb-1 text-gray-300">Username</label>
+                <div class="relative">
+                    <input type="text" id="username" name="username" required
+                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                    <div class="username-info text-xs mt-1 text-gray-400"></div>
+                </div>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium mb-1 text-gray-300">Password</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required
+                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                    <div class="password-info text-xs mt-1 text-gray-400"></div>
+                </div>
+            </div>
+            @if (env('TURNSTILE_ENABLED', false))
+                <div class="flex justify-center">
+                    <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITEKEY') }}"></div>
+                </div>
+            @endif
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded bg-black border border-gray-700 text-red-600 focus:ring-red-500 appearance-none checked:bg-red-600 checked:border-red-600 relative cursor-pointer before:content-[''] before:absolute before:inset-0 before:rounded before:bg-red-600 before:scale-0 checked:before:scale-100 before:transition-transform before:duration-200 before:flex before:items-center before:justify-center before:text-white before:text-xs before:font-bold before:content-['✓']">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
+                </div>
+                <div class="text-sm">
+                    <a href="{{ route('password.request') }}" class="font-medium text-red-500 hover:text-red-400">Forgot password?</a>
+                </div>
+            </div>
+            <div>
+                <button type="submit" id="login-button" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
+                    <i data-feather="log-in"></i> Register / Login
+                </button>
+                <div class="login-info text-xs mt-1 text-gray-400"></div>
+                @if (session('status'))
+                    <div class="text-green-500 text-xs mt-2 text-center">{{ session('status') }}</div>
+                @endif
+                @if ($errors->has('captcha') || $errors->has('login') || $errors->has('email'))
+                    <div class="text-red-500 text-xs mt-2 text-center">
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}<br>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </form>
+        <div class="flex justify-between mt-6 gap-3">
+            <a href="{{ route('auth.social', 'discord') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-medium py-3 px-4 rounded-lg transition-all">
+                <i class="fab fa-discord"></i> Discord
+            </a>
+            <a href="{{ route('auth.social', 'twitter') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
+                <i class="fab fa-x-twitter"></i>
+            </a>
+            <a href="{{ route('auth.social', 'github') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-black font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+        <div class="mt-4">
+            <button disabled
+                class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-medium py-3 px-4 rounded-lg cursor-not-allowed opacity-50 transition-all">
+                <img src="{{ asset('assets/images/greenspirits.svg') }}" alt="Green Spirit Icon" class="h-6 w-6">
+                Spirit Account [SOON]
+            </button>
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : resources\views\auth\forgot-password.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    @if (env('TURNSTILE_ENABLED', false))
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    @endif
+</head>
+<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800"> 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">Reset Password</h1>
+            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+        </div>
+        <p class="text-center text-gray-300 mb-6">
+            Enter your email address and we will send you a link to reset your password.
+        </p>
+        <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+            @csrf
+            <div>
+                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email Address</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+            </div>
+            @if (env('TURNSTILE_ENABLED', false))
+                <div class="flex justify-center">
+                    <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITEKEY') }}"></div>
+                </div>
+            @endif
+            <div>
+                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
+                    Send Password Reset Link
+                </button>
+            </div>
+            @if (session('status'))
+                <div class="text-green-500 text-xs mt-2 text-center">{{ session('status') }}</div>
+            @endif
+            @if ($errors->has('captcha') || $errors->has('email'))
+                <div class="text-red-500 text-xs mt-2 text-center">
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}<br>
+                    @endforeach
+                </div>
+            @endif
+        </form>
+        <div class="mt-6 text-center">
+            <a href="{{ route('welcome') }}" class="font-medium text-red-500 hover:text-red-400">Back to Login</a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : resources\views\auth\reset-password.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    @if (env('TURNSTILE_ENABLED', false))
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    @endif
+</head>
+<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800"> 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">Reset Your Password</h1>
+            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+        </div>
+        <form method="POST" action="{{ route('password.update') }}" class="space-y-5">
+            @csrf
+            <input type="hidden" name="token" value="{{ $token }}">
+            <div>
+                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email Address</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium mb-1 text-gray-300">New Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+            </div>
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium mb-1 text-gray-300">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required
+                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+            </div>
+            @if (env('TURNSTILE_ENABLED', false))
+                <div class="flex justify-center">
+                    <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITEKEY') }}"></div>
+                </div>
+            @endif
+            <div>
+                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
+                    Reset Password
+                </button>
+            </div>
+            @if (session('status'))
+                <div class="text-green-500 text-xs mt-2 text-center">{{ session('status') }}</div>
+            @endif
+            @if ($errors->has('captcha') || $errors->has('email') || $errors->has('password'))
+                <div class="text-red-500 text-xs mt-2 text-center">
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}<br>
+                    @endforeach
+                </div>
+            @endif
+        </form>
+        <div class="mt-6 text-center">
+            <a href="{{ route('welcome') }}" class="font-medium text-red-500 hover:text-red-400">Back to Login</a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : resources\views\auth\verify-email.blade.php
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="text-white bg-black flex items-center justify-center min-h-screen">
+    <div class="p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">Verify Your Email Address</h1>
+            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+        </div>
+        <p class="text-center text-gray-300 mb-6">
+            A verification link has been sent to your email address. Please check your inbox and click the link to verify your email.
+        </p>
+        <form method="POST" action="{{ route('verification.send') }}">
+            @csrf
+            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
+                Resend Verification Email
+            </button>
+        </form>
+        @if (session('message'))
+            <p class="text-green-500 text-center mt-4">{{ session('message') }}</p>
+        @endif
+    </div>
+</body>
+</html>
+
+
+================================================================================
+📄 FICHIER : routes\console.php
+================================================================================
+
+<?php
+
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+
+
+
+================================================================================
+📄 FICHIER : routes\web.php
+================================================================================
+
+<?php
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\AuthController;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Verified;
+
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
+
+Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider'])->name('auth.social');
+Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+
+Route::get('/password/reset', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.update');
+
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+Route::get('/game', function () {
+    return view('game');
+})->name('game.index');
+
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::findOrFail($id);
+
+    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        abort(403);
+    }
+
+    if ($user->markEmailAsVerified()) {
+        event(new Verified($user));
+    }
+
+    return redirect('/game');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/resend', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+

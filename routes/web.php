@@ -4,6 +4,7 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Verified;
+use App\Models\User;
 
 Route::get('/', function () {
     return view('welcome');
