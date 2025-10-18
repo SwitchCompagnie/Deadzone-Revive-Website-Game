@@ -15,8 +15,17 @@ class SocialAuthController extends Controller
 
     public function handleProviderCallback($provider)
     {
-        $socialUser = Socialite::driver($provider)->user();
-        $username = $this->generateUniqueUsername($socialUser, $provider);
+        try {
+            $socialUser = Socialite::driver($provider)->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect('/')->with('error', 'Authentication failed. Please try again.');
+        }
+
+        $providerId = $socialUser->getId();
+        $username = $socialUser->getNickname() ?? $socialUser->getName() ?? $socialUser->getEmail();
+        
+        $username = preg_replace('/[^a-zA-Z0-9_-]/', '', str_replace(' ', '_', $username));
+        
         $password = Str::random(16);
 
         $response = Http::post(env('API_BASE_URL') . '/api/login', [
@@ -35,11 +44,11 @@ class SocialAuthController extends Controller
         }
 
         $user = User::updateOrCreate(
-            ['email' => $socialUser->getEmail() ?? $socialUser->getId() . '@' . $provider . '.com'],
+            [$provider . '_id' => $providerId],
             [
                 'name' => $username,
+                'email' => $socialUser->getEmail() ?? $providerId . '@' . $provider . '.com',
                 'password' => bcrypt($password),
-                $provider . '_id' => $socialUser->getId(),
             ]
         );
 
@@ -51,35 +60,5 @@ class SocialAuthController extends Controller
         }
 
         return redirect('/game?token=' . $data['token']);
-    }
-
-    private function generateUniqueUsername($socialUser, $provider)
-    {
-        $baseUsername = $socialUser->getNickname() ?? Str::slug($socialUser->getName() ?? 'user');
-        $username = $baseUsername;
-        $counter = 1;
-
-        while (User::where('name', $username)->exists()) {
-            $username = $baseUsername . $counter;
-            $counter++;
-        }
-
-        $badwords = ['dick'];
-        if (in_array(strtolower($username), $badwords)) {
-            $username = 'user' . Str::random(6);
-        }
-
-        $response = Http::get(env('API_BASE_URL') . '/api/userexist?username=' . urlencode($username));
-        if ($response->ok() && $response->body() === 'yes') {
-            $username = $baseUsername . $counter;
-            $counter++;
-            while ($response->ok() && $response->body() === 'yes') {
-                $username = $baseUsername . $counter;
-                $response = Http::get(env('API_BASE_URL') . '/api/userexist?username=' . urlencode($username));
-                $counter++;
-            }
-        }
-
-        return $username;
     }
 }

@@ -4,7 +4,7 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Verified;
-use App\Models\User;
+use App\Models\User; // ← Ajout de cette ligne
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,7 +39,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
         event(new Verified($user));
     }
 
-    return redirect('/game');
+    return redirect('/')->with('status', 'Email verified successfully! You can now login.');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/resend', function (Request $request) {
