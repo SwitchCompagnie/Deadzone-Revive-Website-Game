@@ -5,64 +5,64 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public function showLoginForm()
+    {
+        return view('welcome');
+    }
+
     public function login(Request $request)
     {
-        $rules = [
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ];
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string|min:6|regex:/^[a-zA-Z0-9]+$/',
+            'password' => 'required|string|min:6',
+            'cf-turnstile-response' => env('TURNSTILE_ENABLED', false) ? 'required|string' : '',
+        ]);
 
-        if (env('TURNSTILE_ENABLED', false)) {
-            $rules['cf-turnstile-response'] = 'required|string';
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            return back()->withErrors($validator)->withInput();
         }
 
-        $request->validate($rules);
-
         if (env('TURNSTILE_ENABLED', false)) {
-            $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-                'secret' => env('TURNSTILE_SECRET'),
-                'response' => $request->input('cf-turnstile-response'),
-            ]);
-
-            if (!$turnstileResponse->json()['success']) {
-                return back()->withErrors(['captcha' => 'Captcha validation failed.']);
+            $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
+            if (!$turnstileValid) {
+                if ($request->wantsJson()) {
+                    return response()->json(['errors' => ['captcha' => ['Captcha validation failed.']]], 422);
+                }
+                return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
             }
         }
 
-        $apiResponse = Http::post(env('API_BASE_URL') . '/api/login', [
-            'username' => $request->username,
-            'password' => $request->password,
-        ]);
+        $apiToken = $this->authenticateWithApi($request->username, $request->password);
 
-        if (!$apiResponse->ok()) {
-            $error = $apiResponse->json();
-            return back()->withErrors(['login' => $error['reason'] ?? 'Login failed']);
+        if (!$apiToken) {
+            if ($request->wantsJson()) {
+                return response()->json(['errors' => ['login' => ['Invalid credentials or API error.']]], 401);
+            }
+            return back()->withErrors(['login' => 'Invalid credentials or API error.'])->withInput();
         }
 
-        $data = $apiResponse->json();
-        if (!isset($data['token'])) {
-            return back()->withErrors(['login' => 'Invalid response from API']);
-        }
-
-        $user = User::updateOrCreate(
+        $user = User::firstOrCreate(
             ['name' => $request->username],
             ['password' => bcrypt($request->password)]
         );
 
         Auth::login($user, $request->boolean('remember-me'));
 
-        if (!$user->hasVerifiedEmail()) {
+        if (!$user->hasVerifiedEmail() && $user->email) {
             $user->sendEmailVerificationNotification();
-            return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
+            return redirect()->route('verification.notice')->with('message', 'Please verify your email address.');
         }
 
-        return redirect('/game?token=' . $data['token']);
+        return redirect('/game?token=' . $apiToken);
     }
 
     public function showForgotPasswordForm()
@@ -72,30 +72,23 @@ class AuthController extends Controller
 
     public function sendResetLinkEmail(Request $request)
     {
-        $rules = [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-        ];
+            'cf-turnstile-response' => env('TURNSTILE_ENABLED', false) ? 'required|string' : '',
+        ]);
 
-        if (env('TURNSTILE_ENABLED', false)) {
-            $rules['cf-turnstile-response'] = 'required|string';
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
 
-        $request->validate($rules);
-
         if (env('TURNSTILE_ENABLED', false)) {
-            $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-                'secret' => env('TURNSTILE_SECRET'),
-                'response' => $request->input('cf-turnstile-response'),
-            ]);
-
-            if (!$turnstileResponse->json()['success']) {
-                return back()->withErrors(['captcha' => 'Captcha validation failed.']);
+            $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
+            if (!$turnstileValid) {
+                return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
             }
         }
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $status = Password::sendResetLink($request->only('email'));
 
         return $status === Password::RESET_LINK_SENT
             ? back()->with(['status' => __($status)])
@@ -109,35 +102,28 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $rules = [
+        $validator = Validator::make($request->all(), [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ];
+            'password' => 'required|min:6|confirmed',
+            'cf-turnstile-response' => env('TURNSTILE_ENABLED', false) ? 'required|string' : '',
+        ]);
 
-        if (env('TURNSTILE_ENABLED', false)) {
-            $rules['cf-turnstile-response'] = 'required|string';
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
 
-        $request->validate($rules);
-
         if (env('TURNSTILE_ENABLED', false)) {
-            $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-                'secret' => env('TURNSTILE_SECRET'),
-                'response' => $request->input('cf-turnstile-response'),
-            ]);
-
-            if (!$turnstileResponse->json()['success']) {
-                return back()->withErrors(['captcha' => 'Captcha validation failed.']);
+            $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
+            if (!$turnstileValid) {
+                return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
             }
         }
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-                $user->forceFill([
-                    'password' => bcrypt($password)
-                ])->save();
+                $user->forceFill(['password' => bcrypt($password)])->save();
 
                 $apiResponse = Http::post(env('API_BASE_URL') . '/api/update-password', [
                     'username' => $user->name,
@@ -151,7 +137,44 @@ class AuthController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
+            ? redirect()->route('welcome')->with('status', __($status))
             : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('welcome');
+    }
+
+    private function validateTurnstile($token)
+    {
+        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => env('TURNSTILE_SECRET'),
+            'response' => $token,
+        ]);
+
+        return $response->successful() && $response->json()['success'] === true;
+    }
+
+    private function authenticateWithApi($username, $password)
+    {
+        try {
+            $response = Http::post(env('API_BASE_URL') . '/api/login', [
+                'username' => $username,
+                'password' => $password,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['token'] ?? null;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
