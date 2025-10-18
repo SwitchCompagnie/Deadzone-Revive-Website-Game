@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SocialAuthController extends Controller
@@ -39,31 +38,15 @@ class SocialAuthController extends Controller
         $username = $this->generateUsername($socialUser, $provider);
         $email = $socialUser->getEmail() ?? $providerId . '@' . $provider . '.social';
         
-        $user = User::where($provider . '_id', $providerId)->first();
-
-        if (!$user) {
-            $password = Str::random(32);
-            
-            $apiToken = $this->registerWithApi($username, $password);
-            
-            if (!$apiToken) {
-                return redirect()->route('welcome')->with('error', 'Failed to register with game server.');
-            }
-
-            $user = User::create([
-                $provider . '_id' => $providerId,
+        $user = User::firstOrCreate(
+            [$provider . '_id' => $providerId],
+            [
                 'name' => $username,
                 'email' => $email,
-                'password' => bcrypt($password),
+                'password' => bcrypt(Str::random(32)),
                 'email_verified_at' => $socialUser->getEmail() ? now() : null,
-            ]);
-        } else {
-            $apiToken = $this->authenticateWithApi($user->name);
-            
-            if (!$apiToken) {
-                return redirect()->route('welcome')->with('error', 'Failed to authenticate with game server.');
-            }
-        }
+            ]
+        );
 
         Auth::login($user, true);
 
@@ -72,7 +55,7 @@ class SocialAuthController extends Controller
             return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
         }
 
-        return redirect('/game?token=' . $apiToken);
+        return redirect()->route('game.index');
     }
 
     private function generateUsername($socialUser, $provider)
@@ -93,55 +76,5 @@ class SocialAuthController extends Controller
         }
 
         return $username;
-    }
-
-    private function registerWithApi($username, $password)
-    {
-        try {
-            $response = Http::post(env('API_BASE_URL') . '/api/login', [
-                'username' => $username,
-                'password' => $password,
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['token'] ?? null;
-            }
-
-            Log::error("API registration failed for {$username}: " . $response->body());
-            return null;
-        } catch (\Exception $e) {
-            Log::error("API registration exception: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    private function authenticateWithApi($username)
-    {
-        try {
-            $user = User::where('name', $username)->first();
-            if (!$user) {
-                return null;
-            }
-
-            $tempPassword = Str::random(32);
-            $user->password = bcrypt($tempPassword);
-            $user->save();
-
-            $response = Http::post(env('API_BASE_URL') . '/api/login', [
-                'username' => $username,
-                'password' => $tempPassword,
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['token'] ?? null;
-            }
-
-            return null;
-        } catch (\Exception $e) {
-            Log::error("API authentication exception: " . $e->getMessage());
-            return null;
-        }
     }
 }
