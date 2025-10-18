@@ -57,11 +57,6 @@ class AuthController extends Controller
 
         Auth::login($user, $request->boolean('remember-me'));
 
-        if (!$user->hasVerifiedEmail() && $user->email) {
-            $user->sendEmailVerificationNotification();
-            return redirect()->route('verification.notice')->with('message', 'Please verify your email address.');
-        }
-
         return redirect('/game?token=' . $apiToken);
     }
 

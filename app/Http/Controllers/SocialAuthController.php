@@ -69,7 +69,7 @@ class SocialAuthController extends Controller
 
         if (!$user->hasVerifiedEmail() && $user->email && !str_ends_with($user->email, '.social')) {
             $user->sendEmailVerificationNotification();
-            return redirect()->route('verification.notice')->with('message', 'Please verify your email address.');
+            return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
         }
 
         return redirect('/game?token=' . $apiToken);

@@ -8,7 +8,10 @@ use Illuminate\Auth\Events\Verified;
 use App\Models\User;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthController::class, 'showLoginForm'])->name('welcome');
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('welcome');
+    
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider'])->name('auth.social');
