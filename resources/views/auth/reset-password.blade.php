@@ -67,7 +67,7 @@
             @endif
         </form>
         <div class="mt-6 text-center">
-            <a href="{{ route('login') }}" class="font-medium text-red-500 hover:text-red-400">Back to Login</a>
+            <a href="{{ route('welcome') }}" class="font-medium text-red-500 hover:text-red-400">Back to Login</a>
         </div>
     </div>
 </body>
