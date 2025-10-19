@@ -10,7 +10,7 @@
     @endif
 </head>
 <body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
-    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800"> 
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
@@ -21,7 +21,6 @@
             </div>
         </div>
     </nav>
-
     <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold tracking-tight text-white">Reset Password</h1>
@@ -34,13 +33,19 @@
             @csrf
             <div>
                 <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email Address</label>
-                <input type="email" id="email" name="email" required
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required
                     class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                @error('email')
+                    <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+                @enderror
             </div>
             @if (env('TURNSTILE_ENABLED', false))
                 <div class="flex justify-center">
                     <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITEKEY') }}"></div>
                 </div>
+                @error('captcha')
+                    <div class="text-red-500 text-xs text-center">{{ $message }}</div>
+                @enderror
             @endif
             <div>
                 <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
@@ -49,13 +54,6 @@
             </div>
             @if (session('status'))
                 <div class="text-green-500 text-xs mt-2 text-center">{{ session('status') }}</div>
-            @endif
-            @if ($errors->has('captcha') || $errors->has('email'))
-                <div class="text-red-500 text-xs mt-2 text-center">
-                    @foreach ($errors->all() as $error)
-                        {{ $error }}<br>
-                    @endforeach
-                </div>
             @endif
         </form>
         <div class="mt-6 text-center">

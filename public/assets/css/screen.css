@@ -504,7 +504,7 @@ li#feedback a:focus {
   margin-right: 16px;
 }
 
-.debug-log-btn {
+.logout-btn {
   background-color: #363333;
   padding: 8px;
   border: none;
@@ -515,7 +515,7 @@ li#feedback a:focus {
   cursor: pointer;
 }
 
-.debug-log-btn:hover {
+.logout-btn:hover {
   color: #949392ff;
 }
 

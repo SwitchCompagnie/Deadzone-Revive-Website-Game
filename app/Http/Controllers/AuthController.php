@@ -13,11 +13,18 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('game.index');
+        }
         return view('welcome');
     }
 
     public function login(Request $request)
     {
+        if (Auth::check()) {
+            return redirect()->route('game.index');
+        }
+
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|min:6|regex:/^[a-zA-Z0-9]+$/',
             'password' => 'required|string|min:6',
@@ -57,11 +64,22 @@ class AuthController extends Controller
 
         Auth::login($user, $request->boolean('remember-me'));
 
-        return redirect('/game?token=' . $apiToken);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'token' => $apiToken,
+                'redirect' => route('game.index', ['token' => $apiToken])
+            ]);
+        }
+
+        return redirect()->intended(route('game.index', ['token' => $apiToken]));
     }
 
     public function showForgotPasswordForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('game.index');
+        }
         return view('auth.forgot-password');
     }
 
@@ -92,6 +110,9 @@ class AuthController extends Controller
 
     public function showResetPasswordForm($token)
     {
+        if (Auth::check()) {
+            return redirect()->route('game.index');
+        }
         return view('auth.reset-password', ['token' => $token]);
     }
 
@@ -119,12 +140,10 @@ class AuthController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill(['password' => bcrypt($password)])->save();
-
                 $apiResponse = Http::post(env('API_BASE_URL') . '/api/update-password', [
                     'username' => $user->name,
                     'password' => $password,
                 ]);
-
                 if (!$apiResponse->ok()) {
                     throw new \Exception('Failed to update password in external API');
                 }
@@ -150,7 +169,6 @@ class AuthController extends Controller
             'secret' => env('TURNSTILE_SECRET'),
             'response' => $token,
         ]);
-
         return $response->successful() && $response->json()['success'] === true;
     }
 
@@ -161,12 +179,10 @@ class AuthController extends Controller
                 'username' => $username,
                 'password' => $password,
             ]);
-
             if ($response->successful()) {
                 $data = $response->json();
                 return $data['token'] ?? null;
             }
-
             return null;
         } catch (\Exception $e) {
             return null;

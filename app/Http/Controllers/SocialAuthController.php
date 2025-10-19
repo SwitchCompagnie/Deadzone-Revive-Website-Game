@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class SocialAuthController extends Controller
 {
@@ -14,6 +15,10 @@ class SocialAuthController extends Controller
 
     public function redirectToProvider($provider)
     {
+        if (Auth::check()) {
+            return redirect()->route('game.index');
+        }
+
         if (!in_array($provider, $this->allowedProviders)) {
             return redirect()->route('welcome')->with('error', 'Invalid social provider.');
         }
@@ -55,7 +60,13 @@ class SocialAuthController extends Controller
             return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
         }
 
-        return redirect()->route('game.index');
+        $apiToken = $this->authenticateWithApiForSocial($user);
+        
+        if (!$apiToken) {
+            return redirect()->route('welcome')->with('error', 'Unable to connect to game server. Please try again.');
+        }
+
+        return redirect()->route('game.index', ['token' => $apiToken]);
     }
 
     private function generateUsername($socialUser, $provider)
@@ -76,5 +87,37 @@ class SocialAuthController extends Controller
         }
 
         return $username;
+    }
+
+    private function authenticateWithApiForSocial($user)
+    {
+        try {
+            $temporaryPassword = 'social_' . $user->id . '_' . time();
+            
+            $response = Http::post(env('API_BASE_URL') . '/api/login', [
+                'username' => $user->name,
+                'password' => $temporaryPassword,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['token'] ?? null;
+            }
+
+            $registerResponse = Http::post(env('API_BASE_URL') . '/api/register', [
+                'username' => $user->name,
+                'password' => $temporaryPassword,
+            ]);
+
+            if ($registerResponse->successful()) {
+                $registerData = $registerResponse->json();
+                return $registerData['token'] ?? null;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error("API auth error for social user {$user->name}: " . $e->getMessage());
+            return null;
+        }
     }
 }
