@@ -15,7 +15,8 @@ class Dashboard extends BaseDashboard
         return [
             \App\Filament\Widgets\UserStatsWidget::class,
             \App\Filament\Widgets\PlayerAccountStatsWidget::class,
-            \App\Filament\Widgets\UserRegistrationChart::class,
+            \App\Filament\Widgets\UserRegistrationMontlyChart::class,
+            \App\Filament\Widgets\UserRegistrationDailyChart::class,
         ];
     }
 }

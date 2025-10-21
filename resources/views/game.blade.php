@@ -35,7 +35,10 @@
             </div>
             <div class="debug-container">
                 <p class="server-status"><a href="https://status.deadzonegame.net" target="_blank">Server Status: N/A</a></p>
-                <button class="debug-log-btn">Open debug log</button>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="logout-btn bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-2 px-4 rounded-lg font-medium text-sm text-white transition-all">Logout</button>
+                </form>
             </div>
         </div>
 
@@ -67,7 +70,9 @@
             © 2025 Con Artist Games. Fan-made revival.
         </div>
 
-        <div id="user-id">Connecting...</div>
+        <div id="user-id">
+            User ID : {{ Auth::check() ? Auth::user()->id : 'Connecting...' }}
+        </div>
         <div id="con-artist-logo">
             <a href="conartist" title="Con Artist Games" target="_blank">
                 <img src="{{ asset('assets/images/conartistlogo.gif') }}" alt="Con Artist Games">

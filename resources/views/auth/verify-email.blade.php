@@ -15,6 +15,14 @@
                         <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
                     </div>
                 </div>
+                <div>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-red-500 hover:text-red-400 font-medium text-sm transition-all">
+                            Logout
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>

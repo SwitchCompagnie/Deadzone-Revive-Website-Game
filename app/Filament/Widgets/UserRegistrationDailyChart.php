@@ -6,25 +6,26 @@ use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
-class UserRegistrationChart extends ChartWidget
+class UserRegistrationDailyChart extends ChartWidget
 {
-    protected ?string $heading = 'User Registrations per Month';
+    protected ?string $heading = 'User Registrations Per Day';
 
     protected function getData(): array
     {
-        $data = User::select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('COUNT(*) as count'))
-            ->groupBy('month')
-            ->orderBy('month')
+        $data = User::select(DB::raw('DATE(created_at) as day'), DB::raw('COUNT(*) as count'))
+            ->where('created_at', '>=', now()->subDays(7))
+            ->groupBy('day')
+            ->orderBy('day')
             ->get();
 
         return [
-            'labels' => $data->pluck('month')->toArray(),
+            'labels' => $data->pluck('day')->toArray(),
             'datasets' => [
                 [
                     'label' => 'New Users',
                     'data' => $data->pluck('count')->toArray(),
-                    'backgroundColor' => '#3b82f6',
-                    'borderColor' => '#1d4ed8',
+                    'backgroundColor' => '#10b981',
+                    'borderColor' => '#047857',
                 ],
             ],
         ];

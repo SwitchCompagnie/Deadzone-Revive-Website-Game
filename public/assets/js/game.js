@@ -146,6 +146,75 @@ function updateNavClass(a) {
     $("#nav-ul")[0].className = a;
 }
 
+var requestCodeRedeemInterval;
+var waitingForCodeRedeem = false;
+
+function openRedeemCodeDialogue() {
+  updateNavClass("code");
+  if (mt || waitingForCodeRedeem) {
+    return;
+  }
+  var a = function () {
+    try {
+      document.getElementById("game").openRedeemCode();
+      removeMessage("openingCodeRedeem");
+      updateNavClass(null);
+      return true;
+    } catch (b) {}
+    return false;
+  };
+  if (!a()) {
+    addMessage(
+      "openingCodeRedeem",
+      "Please wait while the game loads...",
+      false,
+      true
+    );
+    waitingForCodeRedeem = true;
+    requestCodeRedeemInterval = setInterval(function () {
+      if (a()) {
+        waitingForCodeRedeem = false;
+        clearInterval(requestCodeRedeemInterval);
+      }
+    }, 1000);
+  }
+}
+
+var requestGetMoreInterval;
+var waitingForGetMore = false;
+
+function openGetMoreDialogue() {
+  updateNavClass("get-more");
+  if (mt || waitingForGetMore) {
+    return;
+  }
+  var a = function () {
+    try {
+      if (document.getElementById("game").openGetMore()) {
+        removeMessage("openingFuel");
+        updateNavClass(null);
+        return true;
+      }
+    } catch (b) {}
+    return false;
+  };
+  if (!a()) {
+    addMessage(
+      "openingFuel",
+      "Opening Fuel Store, please wait while the game loads...",
+      false,
+      true
+    );
+    waitingForGetMore = true;
+    requestGetMoreInterval = setInterval(function () {
+      if (a()) {
+        waitingForGetMore = false;
+        clearInterval(requestGetMoreInterval);
+      }
+    }, 1000);
+  }
+}
+
 function setMouseWheelState(a) {
     if (a) {
         document.onmousewheel = null;
