@@ -42,16 +42,25 @@ class SocialAuthController extends Controller
         $providerId = $socialUser->getId();
         $username = $this->generateUsername($socialUser, $provider);
         $email = $socialUser->getEmail() ?? $providerId . '@' . $provider . '.social';
-        
-        $user = User::firstOrCreate(
-            [$provider . '_id' => $providerId],
-            [
+
+        $user = User::where($provider.'_id', $providerId)->first();
+
+        if (!$user) {
+            $randomPassword = Str::random(32);
+            $user = User::create([
                 'name' => $username,
                 'email' => $email,
-                'password' => bcrypt(Str::random(32)),
+                $provider.'_id' => $providerId,
+                'password' => bcrypt($randomPassword),
+                'random_password' => $randomPassword, // stocké pour API login
                 'email_verified_at' => $socialUser->getEmail() ? now() : null,
-            ]
-        );
+            ]);
+
+            Http::post(env('API_BASE_URL') . '/api/register', [
+                'username' => $user->name,
+                'password' => $randomPassword,
+            ]);
+        }
 
         Auth::login($user, true);
 
@@ -61,7 +70,7 @@ class SocialAuthController extends Controller
         }
 
         $apiToken = $this->authenticateWithApiForSocial($user);
-        
+
         if (!$apiToken) {
             return redirect()->route('welcome')->with('error', 'Unable to connect to game server. Please try again.');
         }
@@ -73,7 +82,7 @@ class SocialAuthController extends Controller
     {
         $baseName = $socialUser->getNickname() ?? $socialUser->getName() ?? $socialUser->getEmail();
         $baseName = preg_replace('/[^a-zA-Z0-9]/', '', str_replace(' ', '', $baseName));
-        
+
         if (strlen($baseName) < 6) {
             $baseName = $provider . $baseName;
         }
@@ -92,26 +101,15 @@ class SocialAuthController extends Controller
     private function authenticateWithApiForSocial($user)
     {
         try {
-            $temporaryPassword = 'social_' . $user->id . '_' . time();
-            
+            $password = $user->random_password;
+
             $response = Http::post(env('API_BASE_URL') . '/api/login', [
                 'username' => $user->name,
-                'password' => $temporaryPassword,
+                'password' => $password,
             ]);
 
             if ($response->successful()) {
-                $data = $response->json();
-                return $data['token'] ?? null;
-            }
-
-            $registerResponse = Http::post(env('API_BASE_URL') . '/api/register', [
-                'username' => $user->name,
-                'password' => $temporaryPassword,
-            ]);
-
-            if ($registerResponse->successful()) {
-                $registerData = $registerResponse->json();
-                return $registerData['token'] ?? null;
+                return $response->json()['token'] ?? null;
             }
 
             return null;
