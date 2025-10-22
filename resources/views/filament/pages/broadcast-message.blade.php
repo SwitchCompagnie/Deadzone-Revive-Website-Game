@@ -3,32 +3,37 @@
         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">
             📝 Message Templates
         </h3>
-        
+
         <div class="mb-5">
             <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Maintenance</h4>
             <div class="flex flex-wrap gap-2">
-                <x-filament::button 
+                <x-filament::button
                     color="warning"
                     icon="heroicon-o-wrench"
                     size="sm"
                     wire:click="$set('data.message', 'Server restart in 5 minutes. Please find a safe zone !')">
                     Restart (5min)
                 </x-filament::button>
-                
-                <x-filament::button 
+
+                <x-filament::button
                     color="success"
                     icon="heroicon-o-check-circle"
                     size="sm"
                     wire:click="$set('data.message', 'Server maintenance completed. Welcome back survivors !')">
                     Maintenance Complete
                 </x-filament::button>
-                
-                <x-filament::button 
-                    color="danger"
-                    icon="heroicon-o-exclamation-triangle"
+            </div>
+        </div>
+
+        <div class="mb-5">
+            <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Admin</h4>
+            <div class="flex flex-wrap gap-2">
+                <x-filament::button
+                    color="primary"
+                    icon="heroicon-o-shield-check"
                     size="sm"
-                    wire:click="$set('data.message', 'Emergency server shutdown in 2 minutes !')">
-                    Emergency Shutdown
+                    wire:click="$set('data.protocol', 'admin'); $set('data.message', 'Admin announcement: Please follow server rules!')">
+                    Admin Announcement
                 </x-filament::button>
             </div>
         </div>
@@ -36,7 +41,7 @@
         <div class="mb-5">
             <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Events</h4>
             <div class="flex flex-wrap gap-2">
-                <x-filament::button 
+                <x-filament::button
                     color="info"
                     icon="heroicon-o-sparkles"
                     size="sm"
@@ -49,23 +54,23 @@
         <div class="mb-5">
             <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Community</h4>
             <div class="flex flex-wrap gap-2">
-                <x-filament::button 
+                <x-filament::button
                     color="primary"
                     icon="heroicon-o-arrow-up-circle"
                     size="sm"
                     wire:click="$set('data.message', 'New update deployed ! Check the patch notes for details.')">
                     Update Deployed
                 </x-filament::button>
-                
-                <x-filament::button 
+
+                <x-filament::button
                     color="gray"
                     icon="heroicon-o-heart"
                     size="sm"
                     wire:click="$set('data.message', 'Thank you for playing ! Stay safe out there, survivors !')">
                     Thank You
                 </x-filament::button>
-                
-                <x-filament::button 
+
+                <x-filament::button
                     color="success"
                     icon="heroicon-o-check-badge"
                     size="sm"
@@ -78,19 +83,19 @@
         <div>
             <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Warnings</h4>
             <div class="flex flex-wrap gap-2">
-                <x-filament::button 
+                <x-filament::button
                     color="warning"
                     icon="heroicon-o-signal-slash"
                     size="sm"
-                    wire:click="$set('data.message', 'Connection issues detected. We are working on it !')">
+                    wire:click="$set('data.protocol', 'warn'); $set('data.message', 'Connection issues detected. We are working on it !')">
                     Connection Issue
                 </x-filament::button>
-                
-                <x-filament::button 
+
+                <x-filament::button
                     color="danger"
                     icon="heroicon-o-cpu-chip"
                     size="sm"
-                    wire:click="$set('data.message', 'High server load detected. Please be patient !')">
+                    wire:click="$set('data.protocol', 'warn'); $set('data.message', 'High server load detected. Please be patient !')">
                     High Load
                 </x-filament::button>
             </div>
@@ -99,13 +104,13 @@
 
     <form wire:submit="sendBroadcast">
         {{ $this->form }}
-        
+
         <div class="mt-6 flex justify-end gap-3">
             @foreach($this->getFormActions() as $action)
                 {{ $action }}
             @endforeach
         </div>
     </form>
-    
+
     <x-filament-actions::modals />
 </x-filament-panels::page>

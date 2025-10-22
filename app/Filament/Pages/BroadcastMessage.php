@@ -18,11 +18,8 @@ class BroadcastMessage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-megaphone';
-    
     protected static ?string $navigationLabel = 'Broadcast Message';
-    
     protected static ?string $title = 'Send In-Game Message';
-    
     protected string $view = 'filament.pages.broadcast-message';
 
     public ?array $data = [];
@@ -44,11 +41,11 @@ class BroadcastMessage extends Page implements HasForms
                     ->options([
                         'plain' => 'Plain Message',
                         'admin' => 'Admin Announcement',
+                        'warn' => 'Warning',
                     ])
                     ->required()
                     ->default('plain')
-                    ->helperText('Plain: Regular message | Admin: Blink announcement message'),
-                
+                    ->helperText('Plain: Regular message | Admin: Blink announcement message | Warning: Warning message'),
                 Textarea::make('message')
                     ->label('Message Content')
                     ->required()
@@ -80,7 +77,6 @@ class BroadcastMessage extends Page implements HasForms
                     ->success()
                     ->send();
 
-                // Clear the form
                 $this->form->fill([
                     'protocol' => 'plain',
                     'message' => '',
@@ -98,7 +94,7 @@ class BroadcastMessage extends Page implements HasForms
                 ->body('Could not connect to game server: ' . $e->getMessage())
                 ->danger()
                 ->send();
-        }
+            }
     }
 
     protected function getFormActions(): array
