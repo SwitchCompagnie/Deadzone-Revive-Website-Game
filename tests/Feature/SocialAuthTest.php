@@ -48,6 +48,25 @@ class SocialAuthTest extends TestCase
         $response->assertRedirect('/');
     }
 
+    public function test_social_callback_not_blocked_by_guest_middleware(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'testuser123',
+            'email' => 'test@example.com',
+            'email_verified_at' => now(),
+        ]);
+
+        // Callback should not be blocked by guest middleware even if user is authenticated
+        // This test verifies the fix for the social login redirect issue
+        $response = $this->actingAs($user)->get('/auth/discord/callback');
+
+        // The callback processes and handles OAuth errors (missing state, etc.)
+        // It redirects to welcome with error message, which proves guest middleware
+        // didn't block it - the controller method executed
+        $response->assertRedirect(route('welcome'));
+        $response->assertSessionHas('error', 'Authentication failed. Please try again.');
+    }
+
     public function test_regular_login_regenerates_session(): void
     {
         // This test verifies that session regeneration happens
