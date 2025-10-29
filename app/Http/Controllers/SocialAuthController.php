@@ -71,7 +71,8 @@ class SocialAuthController extends Controller
         request()->session()->regenerate();
 
         if (! $user->hasVerifiedEmail() && $user->email && ! str_ends_with($user->email, '.social')) {
-            $user->sendEmailVerificationNotification();
+            $code = $user->generateEmailVerificationCode();
+            $user->notify(new \App\Notifications\EmailVerificationCode($code));
 
             return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
         }

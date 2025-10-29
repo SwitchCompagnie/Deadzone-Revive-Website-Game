@@ -164,6 +164,39 @@ class AuthController extends Controller
             : back()->withErrors(['email' => __($status)]);
     }
 
+    public function resendVerificationCode(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return back()->with('message', 'Email already verified!');
+        }
+
+        $code = $user->generateEmailVerificationCode();
+        $user->notify(new \App\Notifications\EmailVerificationCode($code));
+
+        return back()->with('message', 'Verification code sent!');
+    }
+
+    public function verifyEmailWithCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|string|size:6',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator);
+        }
+
+        $user = $request->user();
+
+        if ($user->verifyEmailWithCode($request->code)) {
+            return redirect()->route('game.index')->with('status', 'Email verified successfully!');
+        }
+
+        return back()->withErrors(['code' => 'Invalid or expired verification code.']);
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

@@ -56,4 +56,51 @@ class SocialAuthTest extends TestCase
 
         $this->assertTrue(method_exists('\Illuminate\Session\Store', 'regenerate'));
     }
+
+    public function test_user_can_generate_verification_code(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'email_verified_at' => null,
+        ]);
+
+        $code = $user->generateEmailVerificationCode();
+
+        $this->assertIsString($code);
+        $this->assertEquals(6, strlen($code));
+        $this->assertMatchesRegularExpression('/^[0-9]{6}$/', $code);
+        $this->assertNotNull($user->fresh()->email_verification_code);
+        $this->assertNotNull($user->fresh()->email_verification_code_expires_at);
+    }
+
+    public function test_user_can_verify_email_with_valid_code(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'email_verified_at' => null,
+        ]);
+
+        $code = $user->generateEmailVerificationCode();
+
+        $result = $user->verifyEmailWithCode($code);
+
+        $this->assertTrue($result);
+        $this->assertNotNull($user->fresh()->email_verified_at);
+        $this->assertNull($user->fresh()->email_verification_code);
+    }
+
+    public function test_user_cannot_verify_with_invalid_code(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'email_verified_at' => null,
+        ]);
+
+        $user->generateEmailVerificationCode();
+
+        $result = $user->verifyEmailWithCode('999999');
+
+        $this->assertFalse($result);
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
 }
