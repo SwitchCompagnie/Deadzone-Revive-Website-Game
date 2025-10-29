@@ -33,7 +33,7 @@ class SocialAuthController extends Controller
         }
 
         try {
-            $socialUser = Socialite::driver($provider)->stateless()->user();
+            $socialUser = Socialite::driver($provider)->user();
         } catch (\Exception $e) {
             Log::error("Social auth error for {$provider}: ".$e->getMessage());
 
