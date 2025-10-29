@@ -45,6 +45,22 @@
         <div id="warning-container"></div>
         <div id="message-container"></div>
 
+        @if (session('status'))
+            <div class="flash-message flash-success">
+                {{ session('status') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="flash-message flash-error">
+                {{ session('error') }}
+            </div>
+        @endif
+        @if (session('message'))
+            <div class="flash-message flash-info">
+                {{ session('message') }}
+            </div>
+        @endif
+
         <div id="content">
             <div id="game-wrapper">
                 <div id="game-container">

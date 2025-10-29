@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use App\Models\User;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,6 +16,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('game.index');
         }
+
         return view('welcome');
     }
 
@@ -35,25 +36,28 @@ class AuthController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
+
             return back()->withErrors($validator)->withInput();
         }
 
         if (env('TURNSTILE_ENABLED', false)) {
             $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
-            if (!$turnstileValid) {
+            if (! $turnstileValid) {
                 if ($request->wantsJson()) {
                     return response()->json(['errors' => ['captcha' => ['Captcha validation failed.']]], 422);
                 }
+
                 return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
             }
         }
 
         $apiToken = $this->authenticateWithApi($request->username, $request->password);
 
-        if (!$apiToken) {
+        if (! $apiToken) {
             if ($request->wantsJson()) {
                 return response()->json(['errors' => ['login' => ['Invalid credentials or API error.']]], 401);
             }
+
             return back()->withErrors(['login' => 'Invalid credentials or API error.'])->withInput();
         }
 
@@ -64,15 +68,18 @@ class AuthController extends Controller
 
         Auth::login($user, $request->boolean('remember-me'));
 
+        // Regenerate session for security
+        $request->session()->regenerate();
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'token' => $apiToken,
-                'redirect' => route('game.index', ['token' => $apiToken])
+                'redirect' => route('game.index', ['token' => $apiToken]),
             ]);
         }
 
-        return redirect()->intended(route('game.index', ['token' => $apiToken]));
+        return redirect()->intended(route('game.index', ['token' => $apiToken]))->with('status', 'Logged in successfully!');
     }
 
     public function showForgotPasswordForm()
@@ -80,6 +87,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('game.index');
         }
+
         return view('auth.forgot-password');
     }
 
@@ -96,7 +104,7 @@ class AuthController extends Controller
 
         if (env('TURNSTILE_ENABLED', false)) {
             $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
-            if (!$turnstileValid) {
+            if (! $turnstileValid) {
                 return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
             }
         }
@@ -113,6 +121,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('game.index');
         }
+
         return view('auth.reset-password', ['token' => $token]);
     }
 
@@ -131,7 +140,7 @@ class AuthController extends Controller
 
         if (env('TURNSTILE_ENABLED', false)) {
             $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
-            if (!$turnstileValid) {
+            if (! $turnstileValid) {
                 return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
             }
         }
@@ -140,11 +149,11 @@ class AuthController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill(['password' => bcrypt($password)])->save();
-                $apiResponse = Http::post(env('API_BASE_URL') . '/api/update-password', [
+                $apiResponse = Http::post(env('API_BASE_URL').'/api/update-password', [
                     'username' => $user->name,
                     'password' => $password,
                 ]);
-                if (!$apiResponse->ok()) {
+                if (! $apiResponse->ok()) {
                     throw new \Exception('Failed to update password in external API');
                 }
             }
@@ -160,6 +169,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('welcome');
     }
 
@@ -169,20 +179,23 @@ class AuthController extends Controller
             'secret' => env('TURNSTILE_SECRET'),
             'response' => $token,
         ]);
+
         return $response->successful() && $response->json()['success'] === true;
     }
 
     private function authenticateWithApi($username, $password)
     {
         try {
-            $response = Http::post(env('API_BASE_URL') . '/api/login', [
+            $response = Http::post(env('API_BASE_URL').'/api/login', [
                 'username' => $username,
                 'password' => $password,
             ]);
             if ($response->successful()) {
                 $data = $response->json();
+
                 return $data['token'] ?? null;
             }
+
             return null;
         } catch (\Exception $e) {
             return null;
