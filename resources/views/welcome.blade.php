@@ -7,7 +7,7 @@
     <title>Login - Deadzone Revive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://kit.fontawesome.com/7b481d966b.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/e4a3bd96d8.js" crossorigin="anonymous"></script>
     @if (env('TURNSTILE_ENABLED', false))
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     @endif
