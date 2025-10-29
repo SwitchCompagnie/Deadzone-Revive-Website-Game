@@ -57,4 +57,12 @@ Route::middleware(['auth'])->group(function () {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('message', 'Verification link sent!');
     })->middleware('throttle:6,1')->name('verification.send');
+
+    Route::post('/email/verify-code', [AuthController::class, 'verifyEmailWithCode'])
+        ->middleware('throttle:6,1')
+        ->name('verification.verify-code');
+
+    Route::post('/email/resend-code', [AuthController::class, 'resendVerificationCode'])
+        ->middleware('throttle:6,1')
+        ->name('verification.resend-code');
 });

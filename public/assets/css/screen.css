@@ -533,3 +533,59 @@ li#feedback a:focus {
   text-align: start;
   margin-top: 8px;
 }
+
+/* Flash Messages */
+.flash-message {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10000;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideDown 0.3s ease-out, fadeOut 0.3s ease-in 4.7s;
+  animation-fill-mode: forwards;
+}
+
+.flash-success {
+  background-color: #10b981;
+  color: white;
+  border: 2px solid #059669;
+}
+
+.flash-error {
+  background-color: #ef4444;
+  color: white;
+  border: 2px solid #dc2626;
+}
+
+.flash-info {
+  background-color: #3b82f6;
+  color: white;
+  border: 2px solid #2563eb;
+}
+
+@keyframes slideDown {
+  from {
+    top: 60px;
+    opacity: 0;
+  }
+  to {
+    top: 80px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    top: 60px;
+  }
+}

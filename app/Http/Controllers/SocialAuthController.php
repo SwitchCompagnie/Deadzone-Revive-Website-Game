@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 
 class SocialAuthController extends Controller
 {
@@ -19,7 +19,7 @@ class SocialAuthController extends Controller
             return redirect()->route('game.index');
         }
 
-        if (!in_array($provider, $this->allowedProviders)) {
+        if (! in_array($provider, $this->allowedProviders)) {
             return redirect()->route('welcome')->with('error', 'Invalid social provider.');
         }
 
@@ -28,35 +28,38 @@ class SocialAuthController extends Controller
 
     public function handleProviderCallback($provider)
     {
-        if (!in_array($provider, $this->allowedProviders)) {
+        if (! in_array($provider, $this->allowedProviders)) {
             return redirect()->route('welcome')->with('error', 'Invalid social provider.');
         }
 
         try {
             $socialUser = Socialite::driver($provider)->stateless()->user();
         } catch (\Exception $e) {
-            Log::error("Social auth error for {$provider}: " . $e->getMessage());
+            Log::error("Social auth error for {$provider}: ".$e->getMessage());
+
             return redirect()->route('welcome')->with('error', 'Authentication failed. Please try again.');
         }
 
         $providerId = $socialUser->getId();
         $username = $this->generateUsername($socialUser, $provider);
-        $email = $socialUser->getEmail() ?? $providerId . '@' . $provider . '.social';
+        $email = $socialUser->getEmail() ?? $providerId.'@'.$provider.'.social';
 
         $user = User::where($provider.'_id', $providerId)->first();
 
-        if (!$user) {
+        $isNewUser = false;
+        if (! $user) {
+            $isNewUser = true;
             $randomPassword = Str::random(32);
             $user = User::create([
                 'name' => $username,
                 'email' => $email,
                 $provider.'_id' => $providerId,
                 'password' => bcrypt($randomPassword),
-                'random_password' => $randomPassword, // stocké pour API login
+                'random_password' => $randomPassword,
                 'email_verified_at' => $socialUser->getEmail() ? now() : null,
             ]);
 
-            Http::post(env('API_BASE_URL') . '/api/register', [
+            Http::post(env('API_BASE_URL').'/api/register', [
                 'username' => $user->name,
                 'password' => $randomPassword,
             ]);
@@ -64,18 +67,30 @@ class SocialAuthController extends Controller
 
         Auth::login($user, true);
 
-        if (!$user->hasVerifiedEmail() && $user->email && !str_ends_with($user->email, '.social')) {
-            $user->sendEmailVerificationNotification();
+        // Regenerate session for security
+        request()->session()->regenerate();
+
+        if (! $user->hasVerifiedEmail() && $user->email && ! str_ends_with($user->email, '.social')) {
+            $code = $user->generateEmailVerificationCode();
+            $user->notify(new \App\Notifications\EmailVerificationCode($code));
+
             return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
         }
 
         $apiToken = $this->authenticateWithApiForSocial($user);
 
-        if (!$apiToken) {
+        if (! $apiToken) {
+            Auth::logout();
+
             return redirect()->route('welcome')->with('error', 'Unable to connect to game server. Please try again.');
         }
 
-        return redirect()->route('game.index', ['token' => $apiToken]);
+        // Set flash message like regular login
+        $message = $isNewUser
+            ? 'Account created successfully! Welcome to Deadzone.'
+            : 'Logged in successfully via '.ucfirst($provider).'!';
+
+        return redirect()->route('game.index', ['token' => $apiToken])->with('status', $message);
     }
 
     private function generateUsername($socialUser, $provider)
@@ -84,14 +99,14 @@ class SocialAuthController extends Controller
         $baseName = preg_replace('/[^a-zA-Z0-9]/', '', str_replace(' ', '', $baseName));
 
         if (strlen($baseName) < 6) {
-            $baseName = $provider . $baseName;
+            $baseName = $provider.$baseName;
         }
 
         $username = substr($baseName, 0, 20);
         $counter = 1;
 
         while (User::where('name', $username)->exists()) {
-            $username = substr($baseName, 0, 16) . $counter;
+            $username = substr($baseName, 0, 16).$counter;
             $counter++;
         }
 
@@ -103,7 +118,7 @@ class SocialAuthController extends Controller
         try {
             $password = $user->random_password;
 
-            $response = Http::post(env('API_BASE_URL') . '/api/login', [
+            $response = Http::post(env('API_BASE_URL').'/api/login', [
                 'username' => $user->name,
                 'password' => $password,
             ]);
@@ -114,7 +129,8 @@ class SocialAuthController extends Controller
 
             return null;
         } catch (\Exception $e) {
-            Log::error("API auth error for social user {$user->name}: " . $e->getMessage());
+            Log::error("API auth error for social user {$user->name}: ".$e->getMessage());
+
             return null;
         }
     }
