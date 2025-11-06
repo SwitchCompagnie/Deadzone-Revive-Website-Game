@@ -100,15 +100,27 @@
             </div>
         </div>
         <div class="flex justify-between mt-6 gap-3">
-            <a href="{{ route('auth.social', 'discord') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-medium py-3 px-4 rounded-lg transition-all">
-                <i class="fab fa-discord"></i> Discord
-            </a>
-            <a href="{{ route('auth.social', 'twitter') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
-                <i class="fab fa-x-twitter"></i>
-            </a>
-            <a href="{{ route('auth.social', 'github') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-black font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
-                <i class="fab fa-github"></i> GitHub
-            </a>
+            @if(isset($maintenanceMode) && $maintenanceMode)
+                <button disabled class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] opacity-50 cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg">
+                    <i class="fab fa-discord"></i> Discord
+                </button>
+                <button disabled class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent opacity-50 cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg border border-gray-600">
+                    <i class="fab fa-x-twitter"></i>
+                </button>
+                <button disabled class="social-btn flex-1 flex items-center justify-center gap-2 bg-white opacity-50 cursor-not-allowed text-black font-medium py-3 px-4 rounded-lg border border-gray-600">
+                    <i class="fab fa-github"></i> GitHub
+                </button>
+            @else
+                <a href="{{ route('auth.social', 'discord') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-medium py-3 px-4 rounded-lg transition-all">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+                <a href="{{ route('auth.social', 'twitter') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+                <a href="{{ route('auth.social', 'github') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-black font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            @endif
         </div>
         <div class="mt-4">
             <button disabled class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-medium py-3 px-4 rounded-lg cursor-not-allowed opacity-50 transition-all">
