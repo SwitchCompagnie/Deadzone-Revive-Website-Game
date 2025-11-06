@@ -21,17 +21,4 @@ class MaintenanceController extends Controller
             'eta' => Setting::getMaintenanceETA(),
         ]);
     }
-
-    /**
-     * Show maintenance preview (for testing)
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function preview()
-    {
-        return view('maintenance', [
-            'message' => Setting::getMaintenanceMessage(),
-            'eta' => Setting::getMaintenanceETA(),
-        ]);
-    }
 }

@@ -115,13 +115,6 @@ class MaintenanceMode extends Page implements HasForms
 
     protected function getHeaderActions(): array
     {
-        return [
-            Action::make('preview')
-                ->label('Preview Maintenance Page')
-                ->icon('heroicon-o-eye')
-                ->url(route('maintenance.preview'), shouldOpenInNewTab: true)
-                ->color('gray')
-                ->visible(fn () => !Setting::isMaintenanceMode()),
-        ];
+        return [];
     }
 }
