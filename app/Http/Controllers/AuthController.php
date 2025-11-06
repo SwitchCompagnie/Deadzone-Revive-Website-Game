@@ -17,7 +17,9 @@ class AuthController extends Controller
             return redirect()->route('game.index');
         }
 
-        return view('welcome');
+        return view('welcome', [
+            'maintenanceMode' => \App\Models\Setting::isMaintenanceMode(),
+        ]);
     }
 
     public function login(Request $request)
