@@ -10,8 +10,6 @@ class Setting extends Model
     protected $fillable = [
         'key',
         'value',
-        'type',
-        'description',
     ];
 
     /**
@@ -30,7 +28,8 @@ class Setting extends Model
                 return $default;
             }
 
-            return self::castValue($setting->value, $setting->type);
+            // Auto-detect type and cast
+            return self::autoCastValue($setting->value);
         });
     }
 
@@ -39,18 +38,14 @@ class Setting extends Model
      *
      * @param string $key
      * @param mixed $value
-     * @param string|null $type
-     * @param string|null $description
      * @return bool
      */
-    public static function set(string $key, $value, ?string $type = null, ?string $description = null): bool
+    public static function set(string $key, $value): bool
     {
         $setting = self::updateOrCreate(
             ['key' => $key],
             [
-                'value' => is_array($value) ? json_encode($value) : (string) $value,
-                'type' => $type ?? 'string',
-                'description' => $description,
+                'value' => is_array($value) ? json_encode($value) : (is_bool($value) ? ($value ? 'true' : 'false') : (string) $value),
             ]
         );
 
@@ -91,21 +86,42 @@ class Setting extends Model
     }
 
     /**
-     * Cast value to appropriate type
+     * Auto-cast value to appropriate type
      *
-     * @param string $value
-     * @param string $type
+     * @param string|null $value
      * @return mixed
      */
-    private static function castValue(string $value, string $type)
+    private static function autoCastValue(?string $value)
     {
-        return match ($type) {
-            'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
-            'integer' => (int) $value,
-            'float' => (float) $value,
-            'json' => json_decode($value, true),
-            default => $value,
-        };
+        if ($value === null) {
+            return null;
+        }
+
+        // Try to detect boolean
+        if (in_array(strtolower($value), ['true', 'false', '1', '0'])) {
+            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        // Try to detect JSON
+        if (str_starts_with($value, '{') || str_starts_with($value, '[')) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+        }
+
+        // Try to detect integer
+        if (is_numeric($value) && !str_contains($value, '.')) {
+            return (int) $value;
+        }
+
+        // Try to detect float
+        if (is_numeric($value) && str_contains($value, '.')) {
+            return (float) $value;
+        }
+
+        // Return as string
+        return $value;
     }
 
     /**

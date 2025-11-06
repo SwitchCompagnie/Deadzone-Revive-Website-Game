@@ -24,16 +24,21 @@ function checkMaintenanceMode() {
 }
 
 function disableLoginDuringMaintenance(data) {
-    // Disable login button
-    $("#login-button").prop("disabled", true).addClass("opacity-50 cursor-not-allowed");
+    // Disable login button with enhanced gray styling
+    $("#login-button")
+        .prop("disabled", true)
+        .removeClass("bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600")
+        .addClass("bg-gray-600 cursor-not-allowed opacity-50 pointer-events-none transition-all duration-300");
 
     // Disable all social login buttons
     $(".social-btn").each(function() {
-        $(this).addClass("opacity-50 cursor-not-allowed pointer-events-none");
+        $(this).addClass("opacity-40 cursor-not-allowed pointer-events-none grayscale transition-all duration-300");
     });
 
     // Disable form inputs
-    $("#username, #password").prop("disabled", true).addClass("opacity-50");
+    $("#username, #password")
+        .prop("disabled", true)
+        .addClass("opacity-50 cursor-not-allowed bg-gray-900/50");
 
     // Show maintenance message
     const message = data.message || 'The system is currently under maintenance.';
