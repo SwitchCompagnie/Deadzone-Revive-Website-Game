@@ -22,7 +22,9 @@ class ForumThreadController extends Controller
         $thread->incrementViews();
 
         $posts = $thread->posts()
-            ->with(['user', 'likes'])
+            ->with(['user' => function ($query) {
+                $query->withCount('forumPosts');
+            }, 'likes'])
             ->whereNull('parent_id')
             ->orderBy('created_at', 'asc')
             ->paginate(10);

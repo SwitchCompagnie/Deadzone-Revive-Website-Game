@@ -17,6 +17,7 @@ class ForumController extends Controller
             return ForumCategory::with(['children', 'threads' => function ($query) {
                 $query->latest()->limit(5);
             }])
+                ->withCount('threads')
                 ->whereNull('parent_id')
                 ->where('is_active', true)
                 ->orderBy('order')
@@ -33,6 +34,7 @@ class ForumController extends Controller
             ->firstOrFail();
 
         $threads = ForumThread::with(['user', 'posts', 'likes'])
+            ->withCount(['posts', 'likes'])
             ->where('category_id', $category->id)
             ->orderBy('is_pinned', 'desc')
             ->orderBy('created_at', 'desc')
@@ -46,6 +48,7 @@ class ForumController extends Controller
         $query = $request->input('q');
         
         $threads = ForumThread::with(['user', 'category'])
+            ->withCount('posts')
             ->where('title', 'like', "%{$query}%")
             ->orWhereHas('posts', function ($q) use ($query) {
                 $q->where('content', 'like', "%{$query}%");

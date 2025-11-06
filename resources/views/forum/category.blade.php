@@ -60,10 +60,10 @@
                         </div>
                     </div>
                     <div class="w-24 text-center text-gray-300">
-                        {{ $thread->posts->count() }}
+                        {{ $thread->posts_count ?? 0 }}
                     </div>
                     <div class="w-24 text-center text-gray-300">
-                        {{ $thread->likes->count() }}
+                        {{ $thread->likes_count ?? 0 }}
                     </div>
                     <div class="w-24 text-center text-gray-300">
                         {{ number_format($thread->views) }}

@@ -32,7 +32,7 @@
                             </div>
                             <div class="text-right ml-4">
                                 <div class="text-sm text-gray-400">
-                                    {{ $subcategory->threads->count() }} threads
+                                    {{ $subcategory->threads_count ?? 0 }} threads
                                 </div>
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="text-right ml-4">
                             <div class="text-sm text-gray-400">
-                                {{ $category->threads->count() }} threads
+                                {{ $category->threads_count ?? 0 }} threads
                             </div>
                         </div>
                     </div>

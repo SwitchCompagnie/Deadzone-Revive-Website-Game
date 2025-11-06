@@ -50,7 +50,7 @@
                             Joined {{ $post->user->created_at->format('M Y') }}
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
-                            {{ $post->user->forumPosts->count() }} posts
+                            {{ $post->user->forum_posts_count ?? 0 }} posts
                         </div>
                     </div>
                 </div>

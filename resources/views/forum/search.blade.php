@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="text-sm text-gray-400 ml-4">
-                        {{ $thread->posts->count() }} replies
+                        {{ $thread->posts_count ?? 0 }} replies
                     </div>
                 </div>
             </div>
