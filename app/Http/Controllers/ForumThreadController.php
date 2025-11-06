@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ForumThreadController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth')->except(['show']);
-    }
-
     public function show(string $slug): View
     {
         $thread = ForumThread::with(['user', 'category', 'posts.user', 'posts.likes', 'likes'])

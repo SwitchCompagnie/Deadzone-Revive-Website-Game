@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ForumPostController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function store(Request $request, ForumThread $thread): RedirectResponse
     {
         if ($thread->is_locked) {
