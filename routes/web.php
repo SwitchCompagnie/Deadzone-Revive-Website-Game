@@ -11,9 +11,6 @@ use App\Models\User;
 // Maintenance status API endpoint (publicly accessible)
 Route::get('/api/maintenance/status', [MaintenanceController::class, 'status'])->name('maintenance.status');
 
-// Maintenance preview (admin only, defined in middleware check)
-Route::get('/maintenance/preview', [MaintenanceController::class, 'preview'])->name('maintenance.preview');
-
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('welcome');
 
 Route::middleware(['guest', 'App\Http\Middleware\CheckMaintenanceMode'])->group(function () {
