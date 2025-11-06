@@ -6,7 +6,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login - Deadzone Revive</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     @if (env('TURNSTILE_ENABLED', false))
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
