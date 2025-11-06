@@ -72,9 +72,9 @@ class MaintenanceMode extends Page implements HasForms
         $data = $this->form->getState();
 
         try {
-            Setting::set('maintenance_mode', $data['maintenance_mode'] ? 'true' : 'false', 'boolean');
-            Setting::set('maintenance_message', $data['maintenance_message'], 'string');
-            Setting::set('maintenance_eta', $data['maintenance_eta'], 'string');
+            Setting::set('maintenance_mode', $data['maintenance_mode'] ? 'true' : 'false');
+            Setting::set('maintenance_message', $data['maintenance_message']);
+            Setting::set('maintenance_eta', $data['maintenance_eta']);
 
             // Clear all settings cache to ensure immediate update
             Setting::clearCache();
