@@ -15,6 +15,9 @@
                         <p class="text-sm text-red-700 dark:text-red-300 mt-1">
                             Users cannot login or access the game. Only administrators can access the site.
                         </p>
+                        <p class="text-sm text-red-700 dark:text-red-300 mt-1">
+                            <strong>Auto-broadcast:</strong> Your maintenance message is being automatically broadcast to all players every 30 seconds.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -38,12 +41,16 @@
             </div>
         @endif
 
-        <x-filament-panels::form wire:submit="saveSettings">
+        <form wire:submit="saveSettings">
             {{ $this->form }}
 
-            <x-slot name="actions">
-                {{ $this->getFormActions() }}
-            </x-slot>
-        </x-filament-panels::form>
+            <div class="mt-6 flex justify-end gap-3">
+                @foreach($this->getFormActions() as $action)
+                    {{ $action }}
+                @endforeach
+            </div>
+        </form>
+
+        <x-filament-actions::modals />
     </div>
 </x-filament-panels::page>
