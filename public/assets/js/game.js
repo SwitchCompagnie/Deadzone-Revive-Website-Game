@@ -317,10 +317,10 @@ function openGetMoreDialogue() {
 function setMouseWheelState(a) {
     if (a) {
         document.onmousewheel = null;
-        if (document.addEventListener) document.removeEventListener("DOMMouseScroll", preventWheel, false);
+        if (document.addEventListener) document.removeEventListener("DOMMouseScroll", preventWheel, { passive: false });
     } else {
         document.onmousewheel = preventWheel;
-        if (document.addEventListener) document.addEventListener("DOMMouseScroll", preventWheel, false);
+        if (document.addEventListener) document.addEventListener("DOMMouseScroll", preventWheel, { passive: false });
     }
 }
 
