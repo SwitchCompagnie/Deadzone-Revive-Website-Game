@@ -13,6 +13,10 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
     <script id="publishingnetwork" type="text/javascript" async src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
+    <script type="text/javascript">
+        // Set token from backend
+        window.gameToken = "{{ $token ?? '' }}";
+    </script>
 </head>
 <body>
     <div id="wrapper">
@@ -83,15 +87,15 @@
         <div id="footer">
             <a href="https://switchcompagnie.eu/terms" target="_blank">Terms</a> |
             <a href="https://switchcompagnie.eu/terms" target="_blank">Privacy</a> |
-            © 2025 Con Artist Games. Fan-made revival.
+            © 2025 Ruby Realms Studio. Fan-made revival.
         </div>
 
         <div id="user-id">
             User ID : {{ Auth::check() ? Auth::user()->id : 'Connecting...' }}
         </div>
-        <div id="con-artist-logo">
-            <a href="conartist" title="Con Artist Games" target="_blank">
-                <img src="{{ asset('assets/images/conartistlogo.gif') }}" alt="Con Artist Games">
+        <div id="ruby-realms-logo">
+            <a href="https://rubyrealms.studio" title="Ruby Realms Studio" target="_blank">
+                <img src="{{ asset('assets/images/rubyrealmslogo.gif') }}" alt="Ruby Realms Studio">
             </a>
         </div>
     </div>

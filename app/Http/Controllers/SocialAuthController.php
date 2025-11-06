@@ -85,12 +85,15 @@ class SocialAuthController extends Controller
             return redirect()->route('welcome')->with('error', 'Unable to connect to game server. Please try again.');
         }
 
+        // Store API token in session
+        request()->session()->put('api_token', $apiToken);
+
         // Set flash message like regular login
         $message = $isNewUser
             ? 'Account created successfully! Welcome to Deadzone.'
             : 'Logged in successfully via '.ucfirst($provider).'!';
 
-        return redirect()->route('game.index', ['token' => $apiToken])->with('status', $message);
+        return redirect()->route('game.index')->with('status', $message);
     }
 
     private function generateUsername($socialUser, $provider)

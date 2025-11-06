@@ -33,7 +33,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/game', function () {
-        return view('game');
+        $token = \App\Http\Controllers\AuthController::getOrGenerateApiToken();
+
+        if (!$token) {
+            return redirect()->route('login')->with('error', 'Failed to authenticate with game server. Please try logging in again.');
+        }
+
+        return view('game', ['token' => $token]);
     })->middleware(['verified', 'App\Http\Middleware\CheckMaintenanceMode'])->name('game.index');
     
     Route::get('/email/verify', function () {

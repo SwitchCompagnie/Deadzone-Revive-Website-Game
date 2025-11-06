@@ -64,7 +64,7 @@
         </div>
 
         <div class="mt-6 text-gray-500 text-sm">
-            <p>© 2025 Con Artist Games. Fan-made revival.</p>
+            <p>© 2025 Ruby Realms Studio. Fan-made revival.</p>
         </div>
     </div>
 </body>

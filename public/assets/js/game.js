@@ -42,9 +42,14 @@ $(document).ready(function () {
     updateServerStatus();
     setInterval(updateServerStatus, 60000);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    window.token = urlParams.get("token");
-    if (!window.token) console.warn("No token found. The game cannot start automatically.");
+    // Get token from backend (set in game.blade.php) or URL param (fallback)
+    window.token = window.gameToken || new URLSearchParams(window.location.search).get("token");
+
+    if (!window.token) {
+        console.error("No token found. Redirecting to login...");
+        window.location.href = "/login";
+        return;
+    }
 
     // Check maintenance mode before starting the game
     checkMaintenanceMode().then(maintenanceData => {

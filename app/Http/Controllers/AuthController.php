@@ -71,15 +71,18 @@ class AuthController extends Controller
         // Regenerate session for security
         $request->session()->regenerate();
 
+        // Store API token in session
+        $request->session()->put('api_token', $apiToken);
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'token' => $apiToken,
-                'redirect' => route('game.index', ['token' => $apiToken]),
+                'redirect' => route('game.index'),
             ]);
         }
 
-        return redirect()->intended(route('game.index', ['token' => $apiToken]))->with('status', 'Logged in successfully!');
+        return redirect()->intended(route('game.index'))->with('status', 'Logged in successfully!');
     }
 
     public function showForgotPasswordForm()
@@ -231,6 +234,53 @@ class AuthController extends Controller
 
             return null;
         } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get or generate API token for authenticated user
+     *
+     * @return string|null
+     */
+    public static function getOrGenerateApiToken()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return null;
+        }
+
+        // Check if token exists in session and is still valid
+        $token = session('api_token');
+
+        if ($token) {
+            return $token;
+        }
+
+        // Generate new token by authenticating with API
+        try {
+            // Use the stored password or random_password for social logins
+            $password = $user->random_password ?? $user->password;
+
+            $response = Http::post(env('API_BASE_URL').'/api/login', [
+                'username' => $user->name,
+                'password' => $password,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $token = $data['token'] ?? null;
+
+                if ($token) {
+                    session(['api_token' => $token]);
+                    return $token;
+                }
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            \Log::error('Failed to generate API token: ' . $e->getMessage());
             return null;
         }
     }
