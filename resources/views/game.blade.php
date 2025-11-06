@@ -94,7 +94,7 @@
             User ID : {{ Auth::check() ? Auth::user()->id : 'Connecting...' }}
         </div>
         <div id="ruby-realms-logo">
-            <a href="https://rubyrealms.studio" title="Ruby Realms Studio" target="_blank">
+            <a href="https://switchcompagnie.eu" title="Ruby Realms Studio" target="_blank">
                 <img src="{{ asset('assets/images/rubyrealmslogo.gif') }}" alt="Ruby Realms Studio">
             </a>
         </div>
