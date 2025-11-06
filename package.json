@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "websocket": "node websocket-server.js"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
@@ -14,6 +15,8 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^7.1.0"
+        "@fortawesome/fontawesome-free": "^7.1.0",
+        "@ruffle-rs/ruffle": "^0.1.0",
+        "ws": "^8.18.0"
     }
 }

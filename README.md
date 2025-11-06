@@ -101,6 +101,7 @@ Laravel-based web platform for the Deadzone project.
 - Composer
 - MariaDB (MySQL also supported)
 - Apache (or Nginx)
+- Node.js and npm (for Ruffle and WebSocket server)
 
 ### File Structure
 
@@ -186,5 +187,73 @@ php artisan migrate --seed
 
 Then access it via:  
 👉 `http://localhost` (Apache must point to `/public`)
+
+---
+
+## Ruffle Flash Emulator
+
+This project uses **Ruffle**, a Flash Player emulator written in Rust, to run the Flash-based game "The Last Stand: Dead Zone" without requiring Adobe Flash Player.
+
+### Features
+
+- **No Flash Player Required**: Ruffle runs Flash content directly in modern browsers
+- **Automatic Loading**: Ruffle is loaded via CDN and initializes automatically
+- **WebAssembly Based**: Fast and secure Flash emulation
+
+### How It Works
+
+The game automatically loads using Ruffle when you access the game page. The implementation:
+- Replaces the old SWFObject library with Ruffle
+- Loads the game SWF file through Ruffle's WebAssembly player
+- Maintains compatibility with the game's Flash API
+
+---
+
+## WebSocket Server Configuration
+
+The game communicates with a WebSocket server for real-time multiplayer features.
+
+### Configuration
+
+Set the following environment variables in your `.env` file:
+
+```env
+WEBSOCKET_HOST=localhost
+WEBSOCKET_PORT=8080
+WEBSOCKET_PROTOCOL=ws
+```
+
+### Running the WebSocket Server
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the WebSocket server:
+   ```bash
+   npm run websocket
+   ```
+
+3. The server will run on `ws://localhost:8080` by default
+
+### WebSocket Server Features
+
+- **Real-time Communication**: Handles game events and player interactions
+- **Connection Management**: Tracks connected clients
+- **Message Broadcasting**: Sends updates to all connected players
+- **Keep-Alive**: Automatic ping/pong to maintain connections
+
+### Development Mode
+
+To run both the Laravel development server and WebSocket server simultaneously:
+
+```bash
+# Terminal 1: Start Laravel
+php artisan serve
+
+# Terminal 2: Start WebSocket server
+npm run websocket
+```
 
 ---
