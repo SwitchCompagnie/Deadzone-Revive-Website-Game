@@ -6,9 +6,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
     <link href="{{ asset('assets/css/screen.css') }}" rel="stylesheet" type="text/css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.min.js"
-        integrity="sha512-INjccm+ffMBD7roophHluNrqwX0TLzZSEUPX2omxJP78ho8HbymItbcdh3HvgznbxeBhwcuqd6BnkBvdXeb1pg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
@@ -16,6 +14,10 @@
     <script type="text/javascript">
         // Set token from backend
         window.gameToken = "{{ $token ?? '' }}";
+        // WebSocket configuration
+        window.wsHost = "{{ env('WEBSOCKET_HOST', 'localhost') }}";
+        window.wsPort = "{{ env('WEBSOCKET_PORT', '8080') }}";
+        window.wsProtocol = "{{ env('WEBSOCKET_PROTOCOL', 'ws') }}";
     </script>
 </head>
 <body>
@@ -68,16 +70,11 @@
         <div id="content">
             <div id="game-wrapper">
                 <div id="game-container">
-                    <div id="noflash" class="error">
-                        <h2>Flash Player Required</h2>
-                        <p><strong>The Last Stand: Dead Zone</strong> requires the latest version of Adobe<sup>®</sup> Flash<sup>®</sup> Player.<br />
-                        It's free, and only takes a small amount of time to download.</p>
-                        <p>Required version: <strong><span id="noflash-reqVersion"></span></strong></p>
-                        <p>Currently running version: <strong><span id="noflash-currentVersion"></span></strong></p>
-                        <div id="download-flash">
-                            <p><a href="flashplayer" title="Download Flash Player"><strong>Download Flash Player</strong></a></p>
-                            <p><a href="?detectflash=false" title="I already have the latest Flash Player">I already have the latest Flash Player!</a></p>
-                        </div>
+                    <div id="noflash" class="error" style="display:none;">
+                        <h2>Ruffle Player Required</h2>
+                        <p><strong>The Last Stand: Dead Zone</strong> requires Ruffle Flash Emulator to play.<br />
+                        If you see this message, please check your browser console for errors.</p>
+                        <p>Ruffle is loading automatically. If the game doesn't start, please refresh the page.</p>
                     </div>
                 </div>
             </div>

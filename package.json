@@ -14,6 +14,7 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^7.1.0"
+        "@fortawesome/fontawesome-free": "^7.1.0",
+        "@ruffle-rs/ruffle": "^0.1.0"
     }
 }

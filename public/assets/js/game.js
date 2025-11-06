@@ -1,4 +1,3 @@
-var flashVersion = "11.3.300.271";
 var messages = [];
 var unloadMessage = "";
 var mt = false;
@@ -72,14 +71,17 @@ function refreshSession() {
 }
 
 function showGameScreen() {
-    var a = swfobject.getFlashPlayerVersion();
-    $("#noflash-reqVersion").html(flashVersion);
-    $("#noflash-currentVersion").html(a.major + "." + a.minor + "." + a.release);
+    // Ruffle is loaded automatically via CDN
+    console.log("Initializing Ruffle player...");
     if (screen.availWidth <= 1250) $("#nav").css("left", "220px");
 }
 
 function startGame(token) {
     $("#loading").css("display", "block");
+    
+    // Build WebSocket URL using environment variables
+    const wsUrl = `${window.wsProtocol}://${window.wsHost}:${window.wsPort}`;
+    
     const flashVars = {
         path: "/game/",
         service: "pio",
@@ -91,19 +93,70 @@ function startGame(token) {
         playerInsightSegments: [],
         playCodes: [],
         userToken: token,
-        clientInfo: { platform: navigator.platform, userAgent: navigator.userAgent }
+        clientInfo: { platform: navigator.platform, userAgent: navigator.userAgent },
+        wsUrl: wsUrl
     };
-    const params = { allowScriptAccess: "always", allowFullScreen: "true", allowFullScreenInteractive: "true", allowNetworking: "all", menu: "false", scale: "noScale", salign: "tl", wmode: "direct", bgColor: "#000000" };
-    const attributes = { id: "game", name: "game" };
+    
     $("#game-wrapper").height("0px");
-    embedSWF("https://serverlet.deadzonegame.net/game/preloader.swf", flashVars, params, attributes);
+    embedSWF("https://serverlet.deadzonegame.net/game/preloader.swf", flashVars);
 }
 
-function embedSWF(swfURL, flashVars, params, attributes) {
-    swfobject.embedSWF(swfURL, "game-container", "100%", "100%", flashVersion, "swf/expressinstall.swf", flashVars, params, attributes, e => {
-        if (!e.success) showNoFlash();
-        else setMouseWheelState(false);
+function embedSWF(swfURL, flashVars) {
+    const container = document.getElementById("game-container");
+    
+    // Clear the container
+    container.innerHTML = "";
+    
+    // Create Ruffle player
+    const ruffle = window.RufflePlayer.newest();
+    const player = ruffle.createPlayer();
+    
+    // Set player dimensions
+    player.style.width = "100%";
+    player.style.height = "100%";
+    
+    // Configure Ruffle
+    const config = {
+        allowScriptAccess: true,
+        parameters: convertFlashVarsToString(flashVars),
+        backgroundColor: "#000000",
+        letterbox: "off",
+        warnOnUnsupportedContent: false,
+        autoplay: "on"
+    };
+    
+    // Add player to container
+    container.appendChild(player);
+    
+    // Load the SWF
+    player.load({
+        url: swfURL,
+        parameters: convertFlashVarsToString(flashVars),
+        allowScriptAccess: true,
+        backgroundColor: "#000000"
+    }).then(() => {
+        console.log("Ruffle player loaded successfully");
+        onPreloaderReady();
+        setMouseWheelState(false);
+    }).catch((error) => {
+        console.error("Failed to load SWF:", error);
+        showNoFlash();
     });
+    
+    // Store player reference globally for game communication
+    window.rufflePlayer = player;
+}
+
+function convertFlashVarsToString(flashVars) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(flashVars)) {
+        if (typeof value === 'object') {
+            params.append(key, JSON.stringify(value));
+        } else {
+            params.append(key, value);
+        }
+    }
+    return params.toString();
 }
 
 function showNoFlash() {
@@ -127,7 +180,11 @@ function showError(b, a) {
 }
 
 function killGame() {
-    $("#game, #game-container, #loading").remove();
+    if (window.rufflePlayer) {
+        window.rufflePlayer.remove();
+        window.rufflePlayer = null;
+    }
+    $("#game-container, #loading").empty();
     $("#content").prepend("<div id='messagebox'><div class='header'>Are you there?</div><div class='msg'>You've left your compound unattended for some time. Are you still playing?</div><div class='btn' onclick='refresh()'>BACK TO THE DEAD ZONE</div></div>");
 }
 
@@ -137,9 +194,16 @@ function onPreloaderReady() {
 }
 
 function onFlashHide(c) {
+    // Note: Screenshot functionality may not work the same way with Ruffle
     if (c.state == "opened") {
-        var b = document.getElementById("game").getScreenshot();
-        if (b != null) $("#content").append("<img id='screenshot' style='position:absolute; top:120px; width:960px; height:804px;' src='data:image/jpeg;base64," + b + "'/>");
+        try {
+            if (window.rufflePlayer && window.rufflePlayer.getScreenshot) {
+                var b = window.rufflePlayer.getScreenshot();
+                if (b != null) $("#content").append("<img id='screenshot' style='position:absolute; top:120px; width:960px; height:804px;' src='data:image/jpeg;base64," + b + "'/>");
+            }
+        } catch (e) {
+            console.log("Screenshot not available with Ruffle");
+        }
     } else $("#screenshot").remove();
 }
 
@@ -182,11 +246,16 @@ function openRedeemCodeDialogue() {
   }
   var a = function () {
     try {
-      document.getElementById("game").openRedeemCode();
-      removeMessage("openingCodeRedeem");
-      updateNavClass(null);
-      return true;
-    } catch (b) {}
+      // Try to call the method on the Ruffle player
+      if (window.rufflePlayer && window.rufflePlayer.openRedeemCode) {
+        window.rufflePlayer.openRedeemCode();
+        removeMessage("openingCodeRedeem");
+        updateNavClass(null);
+        return true;
+      }
+    } catch (b) {
+      console.error("Error opening redeem code:", b);
+    }
     return false;
   };
   if (!a()) {
@@ -216,12 +285,16 @@ function openGetMoreDialogue() {
   }
   var a = function () {
     try {
-      if (document.getElementById("game").openGetMore()) {
-        removeMessage("openingFuel");
-        updateNavClass(null);
-        return true;
+      if (window.rufflePlayer && window.rufflePlayer.openGetMore) {
+        if (window.rufflePlayer.openGetMore()) {
+          removeMessage("openingFuel");
+          updateNavClass(null);
+          return true;
+        }
       }
-    } catch (b) {}
+    } catch (b) {
+      console.error("Error opening get more:", b);
+    }
     return false;
   };
   if (!a()) {
