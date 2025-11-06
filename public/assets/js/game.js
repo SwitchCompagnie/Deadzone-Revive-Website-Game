@@ -5,6 +5,21 @@ var mt = false;
 var mtPST = "00:00";
 const STATUS_API = 'https://serverlet.deadzonegame.net/api/status';
 const STATUS_URL = 'https://status.deadzonegame.net';
+const MAINTENANCE_API = '/api/maintenance/status';
+
+function checkMaintenanceMode() {
+    return fetch(MAINTENANCE_API)
+        .then(response => response.ok ? response.json() : Promise.reject())
+        .then(data => {
+            mt = data.maintenance || false;
+            mtPST = data.eta || "00:00";
+            return data;
+        })
+        .catch(error => {
+            console.error("Failed to check maintenance status:", error);
+            return { maintenance: false, eta: "00:00" };
+        });
+}
 
 function updateServerStatus() {
     const statusElement = $(".server-status");
@@ -26,15 +41,21 @@ function updateServerStatus() {
 $(document).ready(function () {
     updateServerStatus();
     setInterval(updateServerStatus, 60000);
+
     const urlParams = new URLSearchParams(window.location.search);
     window.token = urlParams.get("token");
     if (!window.token) console.warn("No token found. The game cannot start automatically.");
-    if (mt) showMaintenanceScreen();
-    else if (window.token) {
-        startGame(window.token);
-        setInterval(refreshSession, 50 * 60 * 1000);
-        showGameScreen();
-    }
+
+    // Check maintenance mode before starting the game
+    checkMaintenanceMode().then(maintenanceData => {
+        if (mt) {
+            showMaintenanceScreen();
+        } else if (window.token) {
+            startGame(window.token);
+            setInterval(refreshSession, 50 * 60 * 1000);
+            showGameScreen();
+        }
+    });
 });
 
 function refreshSession() {
