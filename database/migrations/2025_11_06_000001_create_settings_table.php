@@ -28,7 +28,7 @@ return new class extends Migration
             ],
             [
                 'key' => 'maintenance_message',
-                'value' => 'The Last Stand: Dead Zone is down for scheduled maintenance. We apologize for any inconvenience.',
+                'value' => "The Last Stand: Dead Zone is down for scheduled maintenance.\nWe apologize for any inconvenience.",
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

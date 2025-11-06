@@ -32,13 +32,7 @@
 
             <div class="space-y-4 text-gray-300">
                 <p class="text-xl">
-                    The Last Stand: Dead Zone<br>is down for scheduled maintenance.
-                </p>
-                @if($message && $message !== 'The Last Stand: Dead Zone is down for scheduled maintenance.')
-                    <p class="text-lg">{{ $message }}</p>
-                @endif
-                <p class="text-lg">
-                    We apologize for any inconvenience.
+                    {!! nl2br(e($message)) !!}
                 </p>
 
                 @if($eta && $eta !== '00:00')
