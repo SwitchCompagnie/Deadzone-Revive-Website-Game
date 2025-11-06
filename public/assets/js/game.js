@@ -116,7 +116,7 @@ function showNoFlash() {
 function showMaintenanceScreen() {
     var maintenanceMessage = "The Last Stand: Dead Zone is down for scheduled maintenance. ETA " + mtPST + " local time.";
     addMessage("maintenance", maintenanceMessage);
-    showError("Scheduled Maintenance", "The Last Stand: Dead Zone is down for scheduled maintenance.<br/>We apologize for any inconvenience.<br/><br/><strong>ETA " + mtPST + " local time</strong>");
+    showError("Scheduled Maintenance", "The Last Stand: Dead Zone is down for scheduled maintenance.<br/><strong>ETA " + mtPST + " local time</strong>");
 }
 
 function showError(b, a) {
