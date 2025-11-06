@@ -6,18 +6,22 @@ use App\Models\ForumCategory;
 use App\Models\ForumThread;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cache;
 
 class ForumController extends Controller
 {
     public function index(): View
     {
-        $categories = ForumCategory::with(['children', 'threads' => function ($query) {
-            $query->latest()->limit(5);
-        }])
-            ->whereNull('parent_id')
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->get();
+        // Cache the categories list for 10 minutes
+        $categories = Cache::remember('forum.categories.index', 600, function () {
+            return ForumCategory::with(['children', 'threads' => function ($query) {
+                $query->latest()->limit(5);
+            }])
+                ->whereNull('parent_id')
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->get();
+        });
 
         return view('forum.index', compact('categories'));
     }
