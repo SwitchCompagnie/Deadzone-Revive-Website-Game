@@ -1,11 +1,58 @@
 const BASE_URL = 'https://serverlet.deadzonegame.net';
+const MAINTENANCE_API = '/api/maintenance/status';
 let debounceTimeout;
 let usernameTimer;
 let TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000;
 let isUsernameValid = false;
 let isPasswordValid = false;
+let isMaintenanceMode = false;
+
+function checkMaintenanceMode() {
+    return fetch(MAINTENANCE_API)
+        .then(response => response.ok ? response.json() : Promise.reject())
+        .then(data => {
+            isMaintenanceMode = data.maintenance || false;
+            if (isMaintenanceMode) {
+                disableLoginDuringMaintenance(data);
+            }
+            return data;
+        })
+        .catch(error => {
+            console.error("Failed to check maintenance status:", error);
+            return { maintenance: false };
+        });
+}
+
+function disableLoginDuringMaintenance(data) {
+    // Disable login button
+    $("#login-button").prop("disabled", true).addClass("opacity-50 cursor-not-allowed");
+
+    // Disable all social login buttons
+    $(".social-btn").each(function() {
+        $(this).addClass("opacity-50 cursor-not-allowed pointer-events-none");
+    });
+
+    // Disable form inputs
+    $("#username, #password").prop("disabled", true).addClass("opacity-50");
+
+    // Show maintenance message
+    const message = data.message || 'The system is currently under maintenance.';
+    const eta = data.eta || '00:00';
+
+    $(".login-info").html(
+        `<div class="text-orange-500 text-center p-4 bg-orange-900/30 border border-orange-500 rounded-lg mt-4">
+            <i class="fa-solid fa-wrench mr-2"></i>
+            <strong>Maintenance Mode Active</strong><br>
+            ${message}<br>
+            <small>ETA: ${eta} local time</small>
+        </div>`
+    );
+}
 
 $(document).ready(function () {
+    // Check maintenance mode on page load
+    checkMaintenanceMode();
+
     $("#username").on("input", function () {
         const value = $(this).val();
         clearTimeout(debounceTimeout);
@@ -33,6 +80,15 @@ $(document).ready(function () {
 
     $("#pio-login").submit(async function (event) {
         event.preventDefault();
+        if (isMaintenanceMode) {
+            $(".login-info").html(
+                `<div class="text-orange-500 text-center">
+                    <i class="fa-solid fa-wrench mr-2"></i>
+                    Login is disabled during maintenance mode.
+                </div>`
+            );
+            return;
+        }
         if (!isUsernameValid || !isPasswordValid) return;
         const btn = $("#login-button");
         const originalContent = btn.html();

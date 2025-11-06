@@ -3,13 +3,20 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MaintenanceController;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Verified;
 use App\Models\User;
 
+// Maintenance status API endpoint (publicly accessible)
+Route::get('/api/maintenance/status', [MaintenanceController::class, 'status'])->name('maintenance.status');
+
+// Maintenance preview (admin only, defined in middleware check)
+Route::get('/maintenance/preview', [MaintenanceController::class, 'preview'])->name('maintenance.preview');
+
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('welcome');
 
-Route::middleware('guest')->group(function () {
+Route::middleware(['guest', 'App\Http\Middleware\CheckMaintenanceMode'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider'])->name('auth.social');
@@ -24,10 +31,16 @@ Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handlePro
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    
+
     Route::get('/game', function () {
-        return view('game');
-    })->middleware('verified')->name('game.index');
+        $token = \App\Http\Controllers\AuthController::getOrGenerateApiToken();
+
+        if (!$token) {
+            return redirect()->route('login')->with('error', 'Failed to authenticate with game server. Please try logging in again.');
+        }
+
+        return view('game', ['token' => $token]);
+    })->middleware(['verified', 'App\Http\Middleware\CheckMaintenanceMode'])->name('game.index');
     
     Route::get('/email/verify', function () {
         return view('auth.verify-email');
