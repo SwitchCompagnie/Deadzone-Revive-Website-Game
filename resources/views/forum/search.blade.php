@@ -1,0 +1,45 @@
+@extends('forum.layout')
+
+@section('title', 'Search Results')
+
+@section('content')
+<div class="mb-8">
+    <h1 class="text-3xl font-bold">Search Results</h1>
+    <p class="text-gray-400 mt-2">Searching for: "{{ $query }}"</p>
+</div>
+
+<div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+    <div class="divide-y divide-gray-800">
+        @forelse($threads as $thread)
+            <div class="px-6 py-4 hover:bg-gray-800 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <a href="{{ route('forum.thread.show', $thread->slug) }}" 
+                           class="text-lg font-medium text-red-500 hover:text-red-400">
+                            {{ $thread->title }}
+                        </a>
+                        <div class="text-sm text-gray-400 mt-1">
+                            in <a href="{{ route('forum.category', $thread->category->slug) }}" class="text-gray-300 hover:text-white">{{ $thread->category->name }}</a>
+                            • by <span class="text-gray-300">{{ $thread->user->name }}</span>
+                            • {{ $thread->created_at->diffForHumans() }}
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400 ml-4">
+                        {{ $thread->posts->count() }} replies
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="px-6 py-8 text-center text-gray-400">
+                No threads found matching your search.
+            </div>
+        @endforelse
+    </div>
+</div>
+
+@if($threads->hasPages())
+    <div class="mt-6">
+        {{ $threads->links() }}
+    </div>
+@endif
+@endsection
