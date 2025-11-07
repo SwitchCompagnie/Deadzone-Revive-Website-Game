@@ -7,29 +7,24 @@
     <title>@yield('title', 'Forum') - Deadzone Revive</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="text-white bg-black min-h-screen">
-    <nav class="w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
+<body class="text-white bg-black min-h-screen pt-24">
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-8">
+                <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                        <a href="{{ route('forum.index') }}">
+                            <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                        </a>
                     </div>
-                    <a href="{{ route('forum.index') }}" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Forum</a>
+                </div>
+                <div class="flex items-center space-x-4">
                     @auth
+                        <span class="text-gray-300 text-sm hidden sm:inline">{{ auth()->user()->name }}</span>
                         @if(auth()->user()->email_verified_at)
                             <a href="{{ route('game.index') }}" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Game</a>
                         @endif
-                    @endauth
-                </div>
-                <div class="flex items-center space-x-4">
-                    <form action="{{ route('forum.search') }}" method="GET" class="relative">
-                        <input type="text" name="q" placeholder="Search..." 
-                            class="px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 text-sm">
-                    </form>
-                    @auth
-                        <span class="text-gray-300 text-sm">{{ auth()->user()->name }}</span>
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
                             <button type="submit" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium">Logout</button>
                         </form>

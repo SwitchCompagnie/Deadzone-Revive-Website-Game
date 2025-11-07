@@ -11,10 +11,10 @@
         <span class="mx-2">/</span>
         <span>New Thread</span>
     </div>
-    <h1 class="text-3xl font-bold">Create New Thread in {{ $category->name }}</h1>
+    <h1 class="text-2xl sm:text-3xl font-bold">Create New Thread in {{ $category->name }}</h1>
 </div>
 
-<div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
+<div class="bg-gray-900 border border-gray-800 rounded-lg p-4 sm:p-6">
     <form action="{{ route('forum.thread.store', $category->slug) }}" method="POST" class="space-y-6">
         @csrf
 
@@ -38,13 +38,13 @@
             @enderror
         </div>
 
-        <div class="flex justify-end space-x-4">
+        <div class="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
             <a href="{{ route('forum.category', $category->slug) }}" 
-               class="px-6 py-2 border border-gray-700 hover:bg-gray-800 rounded-lg text-gray-300 font-medium transition-colors">
+               class="w-full sm:w-auto px-6 py-2 border border-gray-700 hover:bg-gray-800 rounded-lg text-gray-300 font-medium transition-colors text-center">
                 Cancel
             </a>
             <button type="submit" 
-                class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
+                class="w-full sm:w-auto px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
                 Create Thread
             </button>
         </div>
