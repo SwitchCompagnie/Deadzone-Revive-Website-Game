@@ -24,12 +24,12 @@
 </div>
 
 <div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-    <div class="bg-gray-800 px-4 sm:px-6 py-3 border-b border-gray-700 hidden sm:block">
+    <div class="bg-gray-800 px-4 sm:px-6 py-3 border-b border-gray-700">
         <div class="flex items-center text-sm font-semibold text-gray-400">
             <div class="flex-1">Thread</div>
-            <div class="w-20 sm:w-24 text-center">Replies</div>
-            <div class="w-20 sm:w-24 text-center">Likes</div>
-            <div class="w-20 sm:w-24 text-center">Views</div>
+            <div class="w-20 sm:w-24 text-center hidden sm:block">Replies</div>
+            <div class="w-20 sm:w-24 text-center hidden sm:block">Likes</div>
+            <div class="w-20 sm:w-24 text-center hidden sm:block">Views</div>
         </div>
     </div>
 
