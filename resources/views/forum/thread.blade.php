@@ -11,10 +11,10 @@
         <span class="mx-2">/</span>
         <span>{{ $thread->title }}</span>
     </div>
-    <div class="flex justify-between items-start">
+    <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div class="flex-1">
-            <h1 class="text-3xl font-bold">{{ $thread->title }}</h1>
-            <div class="flex items-center space-x-4 mt-2 text-sm text-gray-400">
+            <h1 class="text-2xl sm:text-3xl font-bold">{{ $thread->title }}</h1>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-gray-400">
                 <span>by <span class="text-gray-300">{{ $thread->user->name }}</span></span>
                 <span>{{ $thread->created_at->format('M d, Y') }}</span>
                 <span>{{ number_format($thread->views) }} views</span>
@@ -34,29 +34,25 @@
     </div>
 </div>
 
-<!-- Thread Posts -->
 <div class="space-y-4">
     @foreach($posts as $post)
         <div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-            <div class="flex">
-                <!-- User Info Sidebar -->
-                <div class="w-48 bg-gray-800 p-4 border-r border-gray-700">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-2 flex items-center justify-center">
-                            <span class="text-2xl text-gray-300">{{ substr($post->user->name, 0, 1) }}</span>
+            <div class="flex flex-col sm:flex-row">
+                <div class="w-full sm:w-48 bg-gray-800 p-4 border-b sm:border-b-0 sm:border-r border-gray-700">
+                    <div class="flex sm:flex-col items-center sm:text-center gap-4 sm:gap-0">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gray-700 rounded-full sm:mx-auto sm:mb-2 flex items-center justify-center flex-shrink-0">
+                            <span class="text-xl sm:text-2xl text-gray-300">{{ substr($post->user->name, 0, 1) }}</span>
                         </div>
-                        <div class="font-medium text-white">{{ $post->user->name }}</div>
-                        <div class="text-xs text-gray-400 mt-1">
-                            Joined {{ $post->user->created_at->format('M Y') }}
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1">
-                            {{ $post->user->forum_posts_count ?? 0 }} posts
+                        <div class="flex-1 sm:flex-none">
+                            <div class="font-medium text-white">{{ $post->user->name }}</div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                Joined {{ $post->user->created_at->format('M Y') }}
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Post Content -->
-                <div class="flex-1 p-6">
+                <div class="flex-1 p-4 sm:p-6">
                     <div class="flex justify-between items-start mb-4">
                         <div class="text-sm text-gray-400">
                             Posted {{ $post->created_at->diffForHumans() }}
@@ -74,7 +70,7 @@
                         </div>
                     </div>
 
-                    <div class="text-gray-300 prose prose-invert max-w-none">
+                    <div class="text-gray-300 prose prose-invert max-w-none break-words">
                         {!! nl2br(e($post->content)) !!}
                     </div>
 
@@ -109,43 +105,4 @@
         {{ $posts->links() }}
     </div>
 @endif
-
-<!-- Reply Form -->
-@auth
-    @if(!$thread->is_locked)
-        <div class="mt-8 bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <h3 class="text-xl font-semibold mb-4">Reply to Thread</h3>
-            <form action="{{ route('forum.post.store', $thread) }}" method="POST" class="space-y-4">
-                @csrf
-                <div>
-                    <textarea name="content" rows="6" required
-                        class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 resize-vertical"
-                        placeholder="Write your reply...">{{ old('content') }}</textarea>
-                    @error('content')
-                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="flex justify-end">
-                    <button type="submit" 
-                        class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
-                        Post Reply
-                    </button>
-                </div>
-            </form>
-        </div>
-    @else
-        <div class="mt-8 bg-gray-900 border border-gray-800 rounded-lg p-6 text-center">
-            <svg class="w-8 h-8 text-gray-500 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-            </svg>
-            <p class="text-gray-400">This thread is locked. No new replies can be posted.</p>
-        </div>
-    @endif
-@else
-    <div class="mt-8 bg-gray-900 border border-gray-800 rounded-lg p-6 text-center">
-        <p class="text-gray-400">
-            <a href="{{ route('login') }}" class="text-red-500 hover:text-red-400">Login</a> to reply to this thread.
-        </p>
-    </div>
-@endauth
 @endsection
