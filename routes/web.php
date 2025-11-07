@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\ForumController;
+use App\Http\Controllers\ForumThreadController;
+use App\Http\Controllers\ForumPostController;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Verified;
 use App\Models\User;
@@ -77,4 +80,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/email/resend-code', [AuthController::class, 'resendVerificationCode'])
         ->middleware('throttle:6,1')
         ->name('verification.resend-code');
+});
+
+// Forum routes (public access to view, auth required to post)
+Route::prefix('forum')->name('forum.')->group(function () {
+    Route::get('/', [ForumController::class, 'index'])->name('index');
+    Route::get('/search', [ForumController::class, 'search'])->name('search');
+    Route::get('/category/{slug}', [ForumController::class, 'category'])->name('category');
+    Route::get('/thread/{slug}', [ForumThreadController::class, 'show'])->name('thread.show');
+    
+    Route::middleware('auth')->group(function () {
+        Route::get('/category/{categorySlug}/create-thread', [ForumThreadController::class, 'create'])->name('thread.create');
+        Route::post('/category/{categorySlug}/create-thread', [ForumThreadController::class, 'store'])->name('thread.store');
+        Route::post('/thread/{thread}/like', [ForumThreadController::class, 'like'])->name('thread.like');
+        Route::post('/thread/{thread}/reply', [ForumPostController::class, 'store'])->name('post.store');
+        Route::post('/post/{post}/like', [ForumPostController::class, 'like'])->name('post.like');
+        Route::delete('/post/{post}', [ForumPostController::class, 'destroy'])->name('post.destroy');
+    });
 });
