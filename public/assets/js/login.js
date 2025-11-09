@@ -21,7 +21,7 @@ if (!String.prototype.includes) {
     };
 }
 
-const BASE_URL = window.API_BASE_URL || 'https://serverlet.deadzonegame.net';
+const BASE_URL = window.API_BASE_URL;
 const MAINTENANCE_API = '/api/maintenance/status';
 let debounceTimeout;
 let usernameTimer;
