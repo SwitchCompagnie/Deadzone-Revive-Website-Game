@@ -63,7 +63,7 @@
             </div>
         </div>
     </nav>
-    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800/50 bg-black/70 backdrop-blur-xl relative z-10 shadow-2xl">
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black relative z-10 shadow-2xl">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
             <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>

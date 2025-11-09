@@ -14,7 +14,9 @@
                 <a href="{{ route('forum.index') }}" class="flex-shrink-0">
                     <img class="h-16 w-auto" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
                 </a>
-                <div class="flex items-center gap-2 sm:gap-4">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('forum.index') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-800">Forum</a>
+                    <a href="https://status.deadzonegame.net/" target="_blank" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-800">Status</a>
                     @auth
                         <span class="text-gray-300 text-sm hidden md:inline">{{ auth()->user()->name }}</span>
                         @if(auth()->user()->email_verified_at)
