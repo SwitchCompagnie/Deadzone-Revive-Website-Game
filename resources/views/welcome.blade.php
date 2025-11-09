@@ -163,7 +163,16 @@
             @endif
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded-full bg-black border border-gray-700 text-red-600 focus:ring-red-500 appearance-none checked:bg-red-600 checked:border-red-600 relative cursor-pointer before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-red-600 before:scale-0 checked:before:scale-100 before:transition-transform before:duration-200 before:flex before:items-center before:justify-center before:text-white before:text-xs before:font-bold before:content-['✓']">
+                    <input id="remember-me" name="remember-me" type="checkbox"
+                        class="h-4 w-4 appearance-none rounded border border-gray-600 bg-black 
+                            checked:bg-red-600 checked:border-red-600 
+                            focus:ring-2 focus:ring-red-500 focus:outline-none 
+                            cursor-pointer relative transition-all duration-200
+                            before:content-['✓'] before:absolute before:inset-0 
+                            before:flex before:items-center before:justify-center 
+                            before:text-white before:text-xs before:font-bold 
+                            before:opacity-0 checked:before:opacity-100 checked:before:scale-100 
+                            before:scale-0 before:transition-all before:duration-200">
                     <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
                 </div>
                 <div class="text-sm">
