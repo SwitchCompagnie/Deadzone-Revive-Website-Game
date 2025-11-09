@@ -29,41 +29,41 @@
 
         .particle {
             position: absolute;
-            background: radial-gradient(circle, rgba(220, 38, 38, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(156, 163, 175, 0.4) 40%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             animation: drift linear infinite;
+            filter: blur(1px);
         }
 
         .bg-grid {
             background-image:
-                linear-gradient(rgba(220, 38, 38, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220, 38, 38, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        .glow-effect {
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.2), 0 0 40px rgba(220, 38, 38, 0.1);
+                linear-gradient(rgba(75, 85, 99, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(75, 85, 99, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: pulse 6s ease-in-out infinite;
         }
     </style>
 </head>
 <body class="text-white bg-black flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
-    <div class="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
+    <div class="fixed inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-950"></div>
     <div class="fixed inset-0 bg-grid"></div>
     <div id="particles-container" class="fixed inset-0"></div>
-    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
+    <div class="fixed inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/80"></div>
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
-                    </div>
+            <div class="flex items-center justify-between h-20">
+                <a href="{{ route('login') }}" class="flex-shrink-0">
+                    <img class="h-16 w-auto" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('forum.index') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-800">Forum</a>
+                    <a href="https://status.deadzonegame.net/" target="_blank" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-800">Status</a>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-red-900/30 bg-black/90 backdrop-blur-md glow-effect relative z-10">
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800/50 bg-black/70 backdrop-blur-xl relative z-10 shadow-2xl">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
             <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
@@ -172,24 +172,24 @@
     <script src="{{ asset('assets/js/login.js') }}"></script>
     <script>
         const particlesContainer = document.getElementById('particles-container');
-        const particleCount = 30;
+        const particleCount = 60;
 
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
 
-            const size = Math.random() * 4 + 2;
+            const size = Math.random() * 8 + 3;
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
 
             particle.style.left = `${Math.random() * 100}%`;
             particle.style.top = `${Math.random() * 100}%`;
 
-            const duration = Math.random() * 40 + 60;
+            const duration = Math.random() * 50 + 40;
             particle.style.animationDuration = `${duration}s`;
-            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particle.style.animationDelay = `${Math.random() * 8}s`;
 
-            particle.style.opacity = Math.random() * 0.3 + 0.1;
+            particle.style.opacity = Math.random() * 0.5 + 0.2;
 
             particlesContainer.appendChild(particle);
         }
