@@ -14,8 +14,9 @@
     <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
     <script id="publishingnetwork" type="text/javascript" async src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
     <script type="text/javascript">
-        // Set token from backend
+        // Set token and API_BASE_URL from backend
         window.gameToken = "{{ $token ?? '' }}";
+        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'https://serverlet.deadzonegame.net')) }}";
     </script>
 </head>
 <body>

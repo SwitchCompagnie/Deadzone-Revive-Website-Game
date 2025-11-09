@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | API Base URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used for API requests to the game server. It should point
+    | to the serverlet API endpoint.
+    |
+    */
+
+    'api_base_url' => env('API_BASE_URL', 'https://serverlet.deadzonegame.net'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
