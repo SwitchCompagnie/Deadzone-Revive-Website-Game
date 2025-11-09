@@ -11,10 +11,27 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    private function redirectIfAuthenticated()
     {
         if (Auth::check()) {
             return redirect()->route('game.index');
+        }
+        return null;
+    }
+
+    private function validateTurnstileIfEnabled($token)
+    {
+        if (!env('TURNSTILE_ENABLED', false)) {
+            return true;
+        }
+
+        return $this->validateTurnstile($token);
+    }
+
+    public function showLoginForm()
+    {
+        if ($redirect = $this->redirectIfAuthenticated()) {
+            return $redirect;
         }
 
         return view('welcome', [
@@ -24,8 +41,8 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (Auth::check()) {
-            return redirect()->route('game.index');
+        if ($redirect = $this->redirectIfAuthenticated()) {
+            return $redirect;
         }
 
         $validator = Validator::make($request->all(), [
@@ -42,15 +59,12 @@ class AuthController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        if (env('TURNSTILE_ENABLED', false)) {
-            $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
-            if (! $turnstileValid) {
-                if ($request->wantsJson()) {
-                    return response()->json(['errors' => ['captcha' => ['Captcha validation failed.']]], 422);
-                }
-
-                return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
+        if (!$this->validateTurnstileIfEnabled($request->input('cf-turnstile-response'))) {
+            if ($request->wantsJson()) {
+                return response()->json(['errors' => ['captcha' => ['Captcha validation failed.']]], 422);
             }
+
+            return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
         }
 
         $apiToken = $this->authenticateWithApi($request->username, $request->password);
@@ -68,12 +82,14 @@ class AuthController extends Controller
             ['password' => bcrypt($request->password)]
         );
 
+        if (!$user->random_password) {
+            $user->update(['random_password' => $request->password]);
+        }
+
         Auth::login($user, $request->boolean('remember-me'));
 
-        // Regenerate session for security
         $request->session()->regenerate();
 
-        // Store API token in session
         $request->session()->put('api_token', $apiToken);
 
         if ($request->wantsJson()) {
@@ -89,8 +105,8 @@ class AuthController extends Controller
 
     public function showForgotPasswordForm()
     {
-        if (Auth::check()) {
-            return redirect()->route('game.index');
+        if ($redirect = $this->redirectIfAuthenticated()) {
+            return $redirect;
         }
 
         return view('auth.forgot-password');
@@ -107,11 +123,8 @@ class AuthController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        if (env('TURNSTILE_ENABLED', false)) {
-            $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
-            if (! $turnstileValid) {
-                return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
-            }
+        if (!$this->validateTurnstileIfEnabled($request->input('cf-turnstile-response'))) {
+            return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
         }
 
         $status = Password::sendResetLink($request->only('email'));
@@ -123,8 +136,8 @@ class AuthController extends Controller
 
     public function showResetPasswordForm($token)
     {
-        if (Auth::check()) {
-            return redirect()->route('game.index');
+        if ($redirect = $this->redirectIfAuthenticated()) {
+            return $redirect;
         }
 
         return view('auth.reset-password', ['token' => $token]);
@@ -143,11 +156,8 @@ class AuthController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        if (env('TURNSTILE_ENABLED', false)) {
-            $turnstileValid = $this->validateTurnstile($request->input('cf-turnstile-response'));
-            if (! $turnstileValid) {
-                return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
-            }
+        if (!$this->validateTurnstileIfEnabled($request->input('cf-turnstile-response'))) {
+            return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
         }
 
         $status = Password::reset(
@@ -211,6 +221,51 @@ class AuthController extends Controller
         return redirect()->route('welcome');
     }
 
+    public function showGame()
+    {
+        $token = self::getOrGenerateApiToken();
+
+        if (!$token) {
+            return redirect()->route('login')->with('error', 'Failed to authenticate with game server. Please try logging in again.');
+        }
+
+        return view('game', ['token' => $token]);
+    }
+
+    public function showVerifyEmailNotice()
+    {
+        return view('auth.verify-email');
+    }
+
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
+
+        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route('game.index')->with('message', 'Email already verified!');
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new \Illuminate\Auth\Events\Verified($user));
+        }
+
+        return redirect()->route('game.index')->with('message', 'Email verified successfully!');
+    }
+
+    public function resendVerificationEmail(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return back()->with('message', 'Email already verified!');
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    }
+
     private function validateTurnstile($token)
     {
         $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
@@ -253,21 +308,21 @@ class AuthController extends Controller
             return null;
         }
 
-        // Check if token exists in session and is still valid
         $token = session('api_token');
 
         if ($token) {
             return $token;
         }
 
-        // Generate new token by authenticating with API
         try {
-            // Use the stored password or random_password for social logins
-            $password = $user->random_password ?? $user->password;
+            if (!$user->random_password) {
+                \Log::error('User missing random_password: ' . $user->name);
+                return null;
+            }
 
             $response = Http::post(env('API_BASE_URL').'/api/login', [
                 'username' => $user->name,
-                'password' => $password,
+                'password' => $user->random_password,
             ]);
 
             if ($response->successful()) {
