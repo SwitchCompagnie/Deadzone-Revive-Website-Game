@@ -13,6 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->create([
+            'name' => 'ZombieBot',
+            'email' => 'zombiebot@gmail.com',
+        ]);
+
         $this->call([
             ForumSeeder::class,
         ]);
