@@ -10,8 +10,48 @@
     @if (env('TURNSTILE_ENABLED', false))
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     @endif
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            33% { transform: translateY(-20px) translateX(10px); }
+            66% { transform: translateY(-10px) translateX(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100vw, 100vh) rotate(360deg); }
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: drift linear infinite;
+        }
+
+        .bg-grid {
+            background-image:
+                linear-gradient(rgba(220, 38, 38, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 38, 38, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.2), 0 0 40px rgba(220, 38, 38, 0.1);
+        }
+    </style>
 </head>
-<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
+<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
+    <div class="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
+    <div class="fixed inset-0 bg-grid"></div>
+    <div id="particles-container" class="fixed inset-0"></div>
     <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -23,7 +63,7 @@
             </div>
         </div>
     </nav>
-    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
+    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-red-900/30 bg-black/90 backdrop-blur-md glow-effect relative z-10">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
             <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
@@ -130,5 +170,29 @@
         </div>
     </div>
     <script src="{{ asset('assets/js/login.js') }}"></script>
+    <script>
+        const particlesContainer = document.getElementById('particles-container');
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+
+            const size = Math.random() * 4 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+
+            const duration = Math.random() * 40 + 60;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+
+            particle.style.opacity = Math.random() * 0.3 + 0.1;
+
+            particlesContainer.appendChild(particle);
+        }
+    </script>
 </body>
 </html>
