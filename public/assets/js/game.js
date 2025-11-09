@@ -3,7 +3,8 @@ var messages = [];
 var unloadMessage = "";
 var mt = false;
 var mtPST = "00:00";
-const STATUS_API = 'https://serverlet.deadzonegame.net/api/status';
+const BASE_URL = window.API_BASE_URL || 'https://serverlet.deadzonegame.net';
+const STATUS_API = BASE_URL + '/api/status';
 const STATUS_URL = 'https://status.deadzonegame.net';
 const MAINTENANCE_API = '/api/maintenance/status';
 
@@ -96,11 +97,11 @@ function startGame(token) {
     const params = { allowScriptAccess: "always", allowFullScreen: "true", allowFullScreenInteractive: "true", allowNetworking: "all", menu: "false", scale: "noScale", salign: "tl", wmode: "direct", bgColor: "#000000" };
     const attributes = { id: "game", name: "game" };
     $("#game-wrapper").height("0px");
-    embedSWF("https://serverlet.deadzonegame.net/game/preloader.swf", flashVars, params, attributes);
+    embedSWF("/game/preloader.swf", flashVars, params, attributes);
 }
 
 function embedSWF(swfURL, flashVars, params, attributes) {
-    swfobject.embedSWF(swfURL, "game-container", "100%", "100%", flashVersion, "swf/expressinstall.swf", flashVars, params, attributes, e => {
+    swfobject.embedSWF(BASE_URL + swfURL, "game-container", "100%", "100%", flashVersion, "swf/expressinstall.swf", flashVars, params, attributes, e => {
         if (!e.success) showNoFlash();
         else setMouseWheelState(false);
     });
