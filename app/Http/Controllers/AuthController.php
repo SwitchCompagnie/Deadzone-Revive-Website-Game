@@ -47,6 +47,7 @@ class AuthController extends Controller
 
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|min:6|regex:/^[a-zA-Z0-9]+$/',
+            'email' => 'required|email|max:255',
             'password' => 'required|string|min:6',
             'cf-turnstile-response' => env('TURNSTILE_ENABLED', false) ? 'required|string' : '',
         ]);
@@ -79,8 +80,16 @@ class AuthController extends Controller
 
         $user = User::firstOrCreate(
             ['name' => $request->username],
-            ['password' => bcrypt($request->password)]
+            [
+                'email' => $request->email,
+                'password' => bcrypt($request->password)
+            ]
         );
+
+        // Update email if user already exists but email is missing or different
+        if ($user->wasRecentlyCreated === false && ($user->email !== $request->email || is_null($user->email))) {
+            $user->update(['email' => $request->email]);
+        }
 
         if (!$user->random_password) {
             $user->update(['random_password' => $request->password]);
