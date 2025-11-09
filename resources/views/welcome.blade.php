@@ -25,11 +25,6 @@
             50% { opacity: 0.5; }
         }
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.5); }
-        }
-
         .bg-animated {
             background: linear-gradient(45deg, #000000, #1a0000, #000000, #0a0000);
             background-size: 400% 400%;
@@ -37,13 +32,9 @@
         }
 
         .bg-dots {
-            background-image: radial-gradient(circle, rgba(220, 38, 38, 0.15) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgba(220, 38, 38, 0.35) 1px, transparent 1px);
             background-size: 30px 30px;
             animation: pulse 8s ease-in-out infinite;
-        }
-
-        .form-container {
-            animation: glow 3s ease-in-out infinite;
         }
 
         /* Fallbacks for older browsers */
@@ -57,9 +48,6 @@
         @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
             .bg-animated {
                 background: #000000;
-            }
-            .form-container {
-                box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
             }
         }
 
@@ -182,7 +170,7 @@
             @endif
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded bg-black border border-gray-700 text-red-600 focus:ring-red-500 appearance-none checked:bg-red-600 checked:border-red-600 relative cursor-pointer before:content-[''] before:absolute before:inset-0 before:rounded before:bg-red-600 before:scale-0 checked:before:scale-100 before:transition-transform before:duration-200 before:flex before:items-center before:justify-center before:text-white before:text-xs before:font-bold before:content-['✓']">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded-full bg-black border border-gray-700 text-red-600 focus:ring-red-500 appearance-none checked:bg-red-600 checked:border-red-600 relative cursor-pointer before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-red-600 before:scale-0 checked:before:scale-100 before:transition-transform before:duration-200 before:flex before:items-center before:justify-center before:text-white before:text-xs before:font-bold before:content-['✓']">
                     <label for="remember-me" class="ml-2 block text-sm text-gray-300">Remember me</label>
                 </div>
                 <div class="text-sm">

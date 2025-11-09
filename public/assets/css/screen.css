@@ -193,6 +193,12 @@ a:hover {
   font-size: 12px;
 }
 
+#ruby-realms-logo {
+  float: right;
+  margin-top: -10px;
+  margin-right: 10px;
+}
+
 #logo {
   position: absolute;
   bottom: 10px;
