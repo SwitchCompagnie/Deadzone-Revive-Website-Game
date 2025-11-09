@@ -91,8 +91,10 @@ class AuthController extends Controller
             $user->update(['email' => $request->email]);
         }
 
-        if (!$user->random_password) {
-            $user->update(['random_password' => $request->password]);
+        // Send verification code for new users or users with unverified emails
+        if ($user->wasRecentlyCreated || !$user->hasVerifiedEmail()) {
+            $code = $user->generateEmailVerificationCode();
+            $user->notify(new \App\Notifications\EmailVerificationCode($code));
         }
 
         Auth::login($user, $request->boolean('remember-me'));
@@ -305,7 +307,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Get or generate API token for authenticated user
+     * Get API token for authenticated user
      *
      * @return string|null
      */
@@ -323,31 +325,8 @@ class AuthController extends Controller
             return $token;
         }
 
-        try {
-            if (!$user->random_password) {
-                \Log::error('User missing random_password: ' . $user->name);
-                return null;
-            }
-
-            $response = Http::post(env('API_BASE_URL').'/api/login', [
-                'username' => $user->name,
-                'password' => $user->random_password,
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $token = $data['token'] ?? null;
-
-                if ($token) {
-                    session(['api_token' => $token]);
-                    return $token;
-                }
-            }
-
-            return null;
-        } catch (\Exception $e) {
-            \Log::error('Failed to generate API token: ' . $e->getMessage());
-            return null;
-        }
+        // If no token in session, user must log in again
+        \Log::warning('No API token in session for user: ' . $user->name);
+        return null;
     }
 }

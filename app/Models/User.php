@@ -18,7 +18,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'name',
         'email',
         'password',
-        'random_password',
         'email_verification_code',
         'email_verification_code_expires_at',
         'discord_id',
@@ -29,7 +28,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     protected $hidden = [
         'password',
-        'random_password',
         'email_verification_code',
         'remember_token',
     ];
