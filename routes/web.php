@@ -23,7 +23,6 @@ Route::middleware(['guest', 'App\Http\Middleware\CheckMaintenanceMode'])->group(
     Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-// Social auth callback must be outside guest middleware to properly handle OAuth redirects
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback'])->name('auth.callback');
 
 Route::middleware(['auth'])->group(function () {
@@ -53,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('verification.resend-code');
 });
 
-// Forum routes (public access to view, auth required to post)
 Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/', [ForumController::class, 'index'])->name('index');
     Route::get('/search', [ForumController::class, 'search'])->name('search');
