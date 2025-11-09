@@ -10,46 +10,104 @@
     @if (env('TURNSTILE_ENABLED', false))
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     @endif
+    <!-- Polyfills for older browsers -->
+    <script nomodule src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3/dist/fetch.umd.js"></script>
     <style>
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            33% { transform: translateY(-20px) translateX(10px); }
-            66% { transform: translateY(-10px) translateX(-10px); }
+        /* Subtle animated gradient background */
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+            50% { opacity: 0.5; }
         }
 
-        @keyframes drift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(100vw, 100vh) rotate(360deg); }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.5); }
         }
 
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(156, 163, 175, 0.4) 40%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: drift linear infinite;
-            filter: blur(1px);
+        .bg-animated {
+            background: linear-gradient(45deg, #000000, #1a0000, #000000, #0a0000);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
-        .bg-grid {
-            background-image:
-                linear-gradient(rgba(75, 85, 99, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(75, 85, 99, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: pulse 6s ease-in-out infinite;
+        .bg-dots {
+            background-image: radial-gradient(circle, rgba(220, 38, 38, 0.15) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .form-container {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        /* Fallbacks for older browsers */
+        @supports not (animation: gradientShift 15s ease infinite) {
+            .bg-animated {
+                background: #000000;
+            }
+        }
+
+        /* IE10+ specific fixes */
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+            .bg-animated {
+                background: #000000;
+            }
+            .form-container {
+                box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+            }
+        }
+
+        /* Flexbox fallback for older browsers */
+        .flex {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+        }
+
+        .items-center {
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .justify-center {
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        .justify-between {
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+        }
+
+        /* Border-radius fallback */
+        input, button, .form-container {
+            -webkit-border-radius: 0.5rem;
+            -moz-border-radius: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Transition fallbacks */
+        input, button, a {
+            -webkit-transition: all 0.3s ease;
+            -moz-transition: all 0.3s ease;
+            -o-transition: all 0.3s ease;
+            transition: all 0.3s ease;
         }
     </style>
 </head>
-<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
-    <div class="fixed inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-950"></div>
-    <div class="fixed inset-0 bg-grid"></div>
-    <div id="particles-container" class="fixed inset-0"></div>
-    <div class="fixed inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/80"></div>
+<body class="text-white flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
+    <div class="fixed inset-0 bg-animated"></div>
+    <div class="fixed inset-0 bg-dots"></div>
+    <div class="fixed inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/80"></div>
     <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
@@ -87,6 +145,18 @@
                         class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
                     <div class="username-info text-xs mt-1 text-gray-400"></div>
                     @error('username')
+                        <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500"
+                        placeholder="your-email@example.com">
+                    <div class="email-info text-xs mt-1 text-gray-400"></div>
+                    @error('email')
                         <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
                     @enderror
                 </div>
@@ -170,29 +240,5 @@
         </div>
     </div>
     <script src="{{ asset('assets/js/login.js') }}"></script>
-    <script>
-        const particlesContainer = document.getElementById('particles-container');
-        const particleCount = 60;
-
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-
-            const size = Math.random() * 8 + 3;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-
-            particle.style.left = `${Math.random() * 100}%`;
-            particle.style.top = `${Math.random() * 100}%`;
-
-            const duration = Math.random() * 50 + 40;
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.animationDelay = `${Math.random() * 8}s`;
-
-            particle.style.opacity = Math.random() * 0.5 + 0.2;
-
-            particlesContainer.appendChild(particle);
-        }
-    </script>
 </body>
 </html>
