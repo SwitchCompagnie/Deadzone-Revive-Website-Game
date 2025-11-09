@@ -21,7 +21,7 @@ if (!String.prototype.includes) {
     };
 }
 
-const BASE_URL = window.API_BASE_URL;
+const BASE_URL = window.API_BASE_URL || window.location.origin;
 const MAINTENANCE_API = '/api/maintenance/status';
 let debounceTimeout;
 let usernameTimer;
