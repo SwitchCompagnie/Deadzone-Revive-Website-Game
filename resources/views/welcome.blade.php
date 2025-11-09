@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div>
-                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email <span class="text-red-500">*</span></label>
+                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email</label>
                 <div class="relative">
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required
                         class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500"
