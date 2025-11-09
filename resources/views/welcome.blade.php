@@ -30,7 +30,7 @@
         }
 
         .bg-dots {
-            background-image: radial-gradient(circle, rgba(220, 38, 38, 0.35) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgb(220 38 38 / 77%) 1px, transparent 1px);
             background-size: 30px 30px;
             animation: pulse 8s ease-in-out infinite;
         }
