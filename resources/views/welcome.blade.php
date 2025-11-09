@@ -10,11 +10,9 @@
     @if (env('TURNSTILE_ENABLED', false))
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     @endif
-    <!-- Polyfills for older browsers -->
     <script nomodule src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3/dist/fetch.umd.js"></script>
     <style>
-        /* Subtle animated gradient background */
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -37,21 +35,18 @@
             animation: pulse 8s ease-in-out infinite;
         }
 
-        /* Fallbacks for older browsers */
         @supports not (animation: gradientShift 15s ease infinite) {
             .bg-animated {
                 background: #000000;
             }
         }
 
-        /* IE10+ specific fixes */
         @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
             .bg-animated {
                 background: #000000;
             }
         }
 
-        /* Flexbox fallback for older browsers */
         .flex {
             display: -webkit-box;
             display: -ms-flexbox;
@@ -76,14 +71,12 @@
             justify-content: space-between;
         }
 
-        /* Border-radius fallback */
         input, button, .form-container {
             -webkit-border-radius: 0.5rem;
             -moz-border-radius: 0.5rem;
             border-radius: 0.5rem;
         }
 
-        /* Transition fallbacks */
         input, button, a {
             -webkit-transition: all 0.3s ease;
             -moz-transition: all 0.3s ease;
@@ -228,7 +221,6 @@
         </div>
     </div>
     <script type="text/javascript">
-        // Set API_BASE_URL from backend
         window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL')) }}";
     </script>
     <script src="{{ asset('assets/js/login.js') }}"></script>
