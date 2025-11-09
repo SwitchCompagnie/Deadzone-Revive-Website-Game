@@ -229,7 +229,7 @@
     </div>
     <script type="text/javascript">
         // Set API_BASE_URL from backend
-        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'https://serverlet.deadzonegame.net')) }}";
+        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL')) }}";
     </script>
     <script src="{{ asset('assets/js/login.js') }}"></script>
 </body>

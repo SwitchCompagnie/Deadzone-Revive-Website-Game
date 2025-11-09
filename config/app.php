@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'api_base_url' => env('API_BASE_URL', 'https://serverlet.deadzonegame.net'),
+    'api_base_url' => env('API_BASE_URL'),
 
     /*
     |--------------------------------------------------------------------------

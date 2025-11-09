@@ -16,7 +16,7 @@
     <script type="text/javascript">
         // Set token and API_BASE_URL from backend
         window.gameToken = "{{ $token ?? '' }}";
-        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'https://serverlet.deadzonegame.net')) }}";
+        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL')) }}";
     </script>
 </head>
 <body>
