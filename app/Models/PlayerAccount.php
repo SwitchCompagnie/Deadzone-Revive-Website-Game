@@ -21,38 +21,18 @@ class PlayerAccount extends Model
         'created_at',
         'last_login',
         'country_code',
-        'server_metadata_json'
+        'server_metadata_json',
+        'player_objects_json',
+        'neighbor_history_json',
+        'inventory_json'
     ];
 
     protected $casts = [
         'created_at' => 'integer',
         'last_login' => 'integer',
-        'server_metadata_json' => 'array'
+        'server_metadata_json' => 'array',
+        'player_objects_json' => 'array',
+        'neighbor_history_json' => 'array',
+        'inventory_json' => 'array'
     ];
-
-    public function inventory()
-    {
-        return $this->hasOne(Inventory::class, 'player_id', 'player_id');
-    }
-
-    public function playerObjects()
-    {
-        return $this->hasOne(PlayerObject::class, 'player_id', 'player_id');
-    }
-
-    public function neighborHistory()
-    {
-        return $this->hasOne(NeighborHistory::class, 'player_id', 'player_id');
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::deleting(function ($player) {
-            $player->inventory()->delete();
-            $player->neighborHistory()->delete();
-            $player->playerObjects()->delete();
-        });
-    }
 }

@@ -3,26 +3,28 @@
 <head>
     <title>The Last Stand: Dead Zone</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
-    <link href="{{ asset('assets/css/screen.css') }}" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+    <base href="{{ config('app.url') }}/">
+    <link rel="icon" type="image/x-icon" href="{{ config('app.url') }}/assets/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ config('app.url') }}/assets/favicon.ico" />
+    <link href="{{ config('app.url') }}/assets/css/screen.css" rel="stylesheet" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.min.js"
         integrity="sha512-INjccm+ffMBD7roophHluNrqwX0TLzZSEUPX2omxJP78ho8HbymItbcdh3HvgznbxeBhwcuqd6BnkBvdXeb1pg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ asset('assets/js/game.js') }}"></script>
-    <script id="publishingnetwork" type="text/javascript" async src="{{ asset('assets/js/PublishingNetwork.js') }}"></script>
+    <script type="text/javascript" src="{{ config('app.url') }}/assets/js/game.js"></script>
+    <script id="publishingnetwork" type="text/javascript" async src="{{ config('app.url') }}/assets/js/PublishingNetwork.js"></script>
     <script type="text/javascript">
         window.gameToken = "{{ $token ?? '' }}";
-        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL')) }}";
+        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'http://127.0.0.1:8080')) }}";
     </script>
 </head>
 <body>
     <div id="wrapper">
         <a name="top"></a>
         <div id="header">
-            <a id="logo" href="#" onclick="refresh()"><img src="{{ asset('assets/images/logo.png') }}" alt="TLS" /></a>
+            <a id="logo" href="#" onclick="refresh()"><img src="{{ config('app.url') }}/assets/images/logo.png" alt="TLS" /></a>
             <div id="nav">
                 <ul id="nav-ul" class="play">
                     <li id="get-more"><a href="#top" onclick="openGetMoreDialogue()">Get More</a></li>
@@ -95,7 +97,7 @@
         </div>
         <div id="ruby-realms-logo">
             <a href="https://switchcompagnie.eu" title="Ruby Realms Studio" target="_blank">
-                <img src="{{ asset('assets/images/rubyrealmslogo.gif') }}" alt="Ruby Realms Studio">
+                <img src="{{ config('app.url') }}/assets/images/rubyrealmslogo.gif" alt="Ruby Realms Studio">
             </a>
         </div>
     </div>
