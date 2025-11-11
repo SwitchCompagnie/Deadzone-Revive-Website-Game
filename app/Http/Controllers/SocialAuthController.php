@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -59,15 +60,18 @@ class SocialAuthController extends Controller
                 'email_verified_at' => $socialUser->getEmail() ? now() : null,
             ]);
 
-            Http::post(env('API_BASE_URL').'/api/register', [
+            $countryCode = $this->getCountryCodeFromIp(request()->ip());
+
+            Http::post(env('API_BASE_URL').'/api/login', [
                 'username' => $user->name,
                 'password' => $randomPassword,
+                'email' => $email,
+                'countryCode' => $countryCode,
             ]);
         }
 
         Auth::login($user, true);
 
-        // Regenerate session for security
         request()->session()->regenerate();
 
         if (! $user->hasVerifiedEmail() && $user->email && ! str_ends_with($user->email, '.social')) {
@@ -77,7 +81,7 @@ class SocialAuthController extends Controller
             return redirect()->route('verification.notice')->with('message', 'Please verify your email address to continue.');
         }
 
-        $apiToken = $this->authenticateWithApiForSocial($user);
+        $apiToken = $this->authenticateWithApiForSocial($user, request()->ip());
 
         if (! $apiToken) {
             Auth::logout();
@@ -85,10 +89,8 @@ class SocialAuthController extends Controller
             return redirect()->route('welcome')->with('error', 'Unable to connect to game server. Please try again.');
         }
 
-        // Store API token in session
         request()->session()->put('api_token', $apiToken);
 
-        // Set flash message like regular login
         $message = $isNewUser
             ? 'Account created successfully! Welcome to Deadzone.'
             : 'Logged in successfully via '.ucfirst($provider).'!';
@@ -116,14 +118,17 @@ class SocialAuthController extends Controller
         return $username;
     }
 
-    private function authenticateWithApiForSocial($user)
+    private function authenticateWithApiForSocial($user, $ip)
     {
         try {
             $password = $user->random_password;
+            $countryCode = $this->getCountryCodeFromIp($ip);
 
             $response = Http::post(env('API_BASE_URL').'/api/login', [
                 'username' => $user->name,
                 'password' => $password,
+                'email' => $user->email,
+                'countryCode' => $countryCode,
             ]);
 
             if ($response->successful()) {
@@ -136,5 +141,34 @@ class SocialAuthController extends Controller
 
             return null;
         }
+    }
+
+    private function getCountryCodeFromIp($ip)
+    {
+        if (in_array($ip, ['127.0.0.1', '::1', 'localhost'])) {
+            return null;
+        }
+
+        $cacheKey = 'country_code_' . md5($ip);
+
+        return Cache::remember($cacheKey, 3600, function() use ($ip) {
+            return $this->fetchCountryCodeFromApi($ip);
+        });
+    }
+
+    private function fetchCountryCodeFromApi($ip)
+    {
+        try {
+            $response = Http::timeout(2)->get("http://ip-api.com/json/{$ip}?fields=countryCode");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['countryCode'] ?? null;
+            }
+        } catch (\Exception $e) {
+            Log::debug("Failed to get country code for IP {$ip}: " . $e->getMessage());
+        }
+
+        return null;
     }
 }

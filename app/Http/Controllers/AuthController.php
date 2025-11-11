@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
@@ -68,7 +69,14 @@ class AuthController extends Controller
             return back()->withErrors(['captcha' => 'Captcha validation failed.'])->withInput();
         }
 
-        $apiToken = $this->authenticateWithApi($request->username, $request->password);
+        $countryCode = $this->getCountryCodeFromIp($request->ip());
+
+        $apiToken = $this->authenticateWithApi(
+            $request->username,
+            $request->password,
+            $request->email,
+            $countryCode
+        );
 
         if (! $apiToken) {
             if ($request->wantsJson()) {
@@ -86,12 +94,19 @@ class AuthController extends Controller
             ]
         );
 
-        // Update email if user already exists but email is missing or different
+        $needsUpdate = false;
+        $updates = [];
+
         if ($user->wasRecentlyCreated === false && ($user->email !== $request->email || is_null($user->email))) {
-            $user->update(['email' => $request->email]);
+            $updates['email'] = $request->email;
+            $needsUpdate = true;
         }
 
-        // Send verification code for new users or users with unverified emails
+        if ($needsUpdate) {
+            $user->update($updates);
+            $this->updateGameServerUserInfo($request->username, $request->email, $countryCode);
+        }
+
         if ($user->wasRecentlyCreated || !$user->hasVerifiedEmail()) {
             $code = $user->generateEmailVerificationCode();
             $user->notify(new \App\Notifications\EmailVerificationCode($code));
@@ -287,12 +302,14 @@ class AuthController extends Controller
         return $response->successful() && $response->json()['success'] === true;
     }
 
-    private function authenticateWithApi($username, $password)
+    private function authenticateWithApi($username, $password, $email = null, $countryCode = null)
     {
         try {
             $response = Http::post(env('API_BASE_URL').'/api/login', [
                 'username' => $username,
                 'password' => $password,
+                'email' => $email,
+                'countryCode' => $countryCode,
             ]);
             if ($response->successful()) {
                 $data = $response->json();
@@ -302,15 +319,57 @@ class AuthController extends Controller
 
             return null;
         } catch (\Exception $e) {
+            \Log::error("API authentication error: " . $e->getMessage());
             return null;
         }
     }
 
-    /**
-     * Get API token for authenticated user
-     *
-     * @return string|null
-     */
+    private function getCountryCodeFromIp($ip)
+    {
+        if (in_array($ip, ['127.0.0.1', '::1', 'localhost'])) {
+            return null;
+        }
+
+        $cacheKey = 'country_code_' . md5($ip);
+
+        return Cache::remember($cacheKey, 3600, function() use ($ip) {
+            return $this->fetchCountryCodeFromApi($ip);
+        });
+    }
+
+    private function fetchCountryCodeFromApi($ip)
+    {
+        try {
+            $response = Http::timeout(2)->get("http://ip-api.com/json/{$ip}?fields=countryCode");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['countryCode'] ?? null;
+            }
+        } catch (\Exception $e) {
+            \Log::debug("Failed to get country code for IP {$ip}: " . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    private function updateGameServerUserInfo($username, $email, $countryCode = null)
+    {
+        try {
+            $response = Http::timeout(5)->post(env('API_BASE_URL').'/api/update-user-info', [
+                'username' => $username,
+                'email' => $email,
+                'countryCode' => $countryCode,
+            ]);
+
+            if (!$response->successful()) {
+                \Log::warning("Failed to update game server user info for {$username}: " . $response->body());
+            }
+        } catch (\Exception $e) {
+            \Log::error("Error updating game server user info for {$username}: " . $e->getMessage());
+        }
+    }
+
     public static function getOrGenerateApiToken()
     {
         $user = auth()->user();
@@ -325,7 +384,6 @@ class AuthController extends Controller
             return $token;
         }
 
-        // If no token in session, user must log in again
         \Log::warning('No API token in session for user: ' . $user->name);
         return null;
     }
