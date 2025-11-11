@@ -116,8 +116,8 @@ class AdminAuditLogsTable
                             );
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                \Filament\Actions\ViewAction::make()
                     ->label('Détails'),
             ])
             ->defaultSort('created_at', 'desc')
