@@ -6,30 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('admin_audit_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('user_name')->nullable(); // Stocké au cas où l'utilisateur est supprimé
-            $table->string('action'); // view, create, update, delete
-            $table->string('resource_type'); // Ex: App\Models\User, App\Models\PlayerAccount
-            $table->string('resource_name')->nullable(); // Nom lisible de la ressource
-            $table->string('resource_id')->nullable(); // ID de l'enregistrement affecté
-            $table->string('resource_title')->nullable(); // Titre/nom de l'enregistrement pour affichage
-            $table->text('description')->nullable(); // Description de l'action
-            $table->json('old_values')->nullable(); // Anciennes valeurs (pour update/delete)
-            $table->json('new_values')->nullable(); // Nouvelles valeurs (pour create/update)
-            $table->json('metadata')->nullable(); // Métadonnées supplémentaires
+            $table->string('user_name')->nullable();
+            $table->string('action');
+            $table->string('resource_type');
+            $table->string('resource_name')->nullable();
+            $table->string('resource_id')->nullable();
+            $table->string('resource_title')->nullable();
+            $table->text('description')->nullable();
+            $table->json('old_values')->nullable();
+            $table->json('new_values')->nullable();
+            $table->json('metadata')->nullable();
             $table->string('ip_address')->nullable();
             $table->text('user_agent')->nullable();
             $table->string('url')->nullable();
             $table->timestamps();
 
-            // Index pour améliorer les performances
             $table->index('user_id');
             $table->index('resource_type');
             $table->index('action');
@@ -38,9 +34,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('admin_audit_logs');

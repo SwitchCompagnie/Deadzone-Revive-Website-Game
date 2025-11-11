@@ -10,16 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FilamentAuditMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
 
-        // Enregistrer uniquement pour les requêtes GET authentifiées dans le panel admin
         if (
             $request->isMethod('GET') &&
             $request->user() &&
@@ -31,14 +25,10 @@ class FilamentAuditMiddleware
         return $response;
     }
 
-    /**
-     * Enregistrer la consultation d'une page
-     */
     private function logPageView(Request $request): void
     {
         $path = $request->path();
 
-        // Ignorer certaines routes (assets, API, etc.)
         $ignoredPatterns = [
             'admin/livewire',
             'admin/_debugbar',
@@ -54,10 +44,8 @@ class FilamentAuditMiddleware
             }
         }
 
-        // Détecter le type de page et la ressource
         $pageInfo = $this->detectPageInfo($path);
 
-        // Enregistrer la consultation
         AdminAuditService::log(
             action: 'view',
             resourceType: $pageInfo['resource_type'],
@@ -70,12 +58,8 @@ class FilamentAuditMiddleware
         );
     }
 
-    /**
-     * Détecter les informations sur la page consultée
-     */
     private function detectPageInfo(string $path): array
     {
-        // Pattern: admin/resource-name/action/id
         $segments = explode('/', trim($path, '/'));
 
         if (count($segments) < 2) {
@@ -87,7 +71,6 @@ class FilamentAuditMiddleware
             ];
         }
 
-        // Mapping des ressources
         $resourceMap = [
             'users' => 'Utilisateur',
             'player-accounts' => 'Compte joueur',
@@ -103,14 +86,12 @@ class FilamentAuditMiddleware
 
         $resourceName = $resourceMap[$resourceSlug] ?? ucfirst(str_replace('-', ' ', $resourceSlug));
 
-        // Déterminer le type de page
         $pageType = match ($action) {
             'create' => 'create',
             'edit' => 'edit',
             default => 'list',
         };
 
-        // Générer la description
         $description = match ($pageType) {
             'create' => "a consulté le formulaire de création d'un(e) {$resourceName}",
             'edit' => "a consulté le formulaire d'édition d'un(e) {$resourceName}" . ($id ? " (#{$id})" : ''),

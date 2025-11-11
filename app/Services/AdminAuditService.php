@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Request;
 
 class AdminAuditService
 {
-    /**
-     * Enregistrer une action d'audit
-     */
     public static function log(
         string $action,
         ?Model $resource = null,
@@ -24,7 +21,6 @@ class AdminAuditService
     ): AdminAuditLog {
         $user = Auth::user();
 
-        // Si une ressource est fournie, extraire les informations
         if ($resource) {
             $resourceType = get_class($resource);
             $resourceId = $resource->getKey();
@@ -52,28 +48,18 @@ class AdminAuditService
         ]);
     }
 
-    /**
-     * Enregistrer une consultation
-     */
     public static function logView(?Model $resource = null, ?string $resourceName = null): AdminAuditLog
     {
         return self::log('view', $resource, null, $resourceName);
     }
 
-    /**
-     * Enregistrer une création
-     */
     public static function logCreate(Model $resource, ?string $resourceName = null, ?array $values = null): AdminAuditLog
     {
         return self::log('create', $resource, null, $resourceName, null, $values ?? $resource->getAttributes());
     }
 
-    /**
-     * Enregistrer une modification
-     */
     public static function logUpdate(Model $resource, ?string $resourceName = null, ?array $oldValues = null, ?array $newValues = null): AdminAuditLog
     {
-        // Si les valeurs ne sont pas fournies, utiliser les changements du modèle
         if (!$oldValues && !$newValues && $resource->isDirty()) {
             $changes = $resource->getDirty();
             $oldValues = [];
@@ -88,28 +74,18 @@ class AdminAuditService
         return self::log('update', $resource, null, $resourceName, $oldValues, $newValues);
     }
 
-    /**
-     * Enregistrer une suppression
-     */
     public static function logDelete(Model $resource, ?string $resourceName = null): AdminAuditLog
     {
         return self::log('delete', $resource, null, $resourceName, $resource->getAttributes());
     }
 
-    /**
-     * Enregistrer une restauration
-     */
     public static function logRestore(Model $resource, ?string $resourceName = null): AdminAuditLog
     {
         return self::log('restore', $resource, null, $resourceName);
     }
 
-    /**
-     * Obtenir un titre lisible pour une ressource
-     */
     private static function getResourceTitle(Model $resource): ?string
     {
-        // Essayer différents attributs communs pour le titre
         $titleAttributes = ['name', 'title', 'label', 'username', 'email', 'slug'];
 
         foreach ($titleAttributes as $attribute) {
@@ -118,13 +94,9 @@ class AdminAuditService
             }
         }
 
-        // Si aucun attribut trouvé, retourner l'ID
         return "#{$resource->getKey()}";
     }
 
-    /**
-     * Générer une description automatique
-     */
     private static function generateDescription(string $action, ?string $resourceName, ?string $resourceTitle): string
     {
         $actionLabels = [
@@ -142,9 +114,6 @@ class AdminAuditService
         return "{$actionLabel} {$resource}{$title}";
     }
 
-    /**
-     * Nettoyer les valeurs avant stockage (supprimer les champs sensibles)
-     */
     private static function sanitizeValues(array $values): array
     {
         $sensitiveFields = ['password', 'password_confirmation', 'remember_token', 'token', 'api_token', 'secret'];
@@ -158,9 +127,6 @@ class AdminAuditService
         return $values;
     }
 
-    /**
-     * Comparer deux ensembles de valeurs et retourner uniquement les changements
-     */
     public static function getChanges(array $old, array $new): array
     {
         $changes = [];
@@ -177,9 +143,6 @@ class AdminAuditService
         return $changes;
     }
 
-    /**
-     * Obtenir les statistiques d'audit pour un utilisateur
-     */
     public static function getUserStats(?int $userId = null, ?string $period = 'week'): array
     {
         $query = AdminAuditLog::query();
@@ -188,7 +151,6 @@ class AdminAuditService
             $query->where('user_id', $userId);
         }
 
-        // Filtrer par période
         if ($period) {
             $date = match ($period) {
                 'day' => now()->subDay(),

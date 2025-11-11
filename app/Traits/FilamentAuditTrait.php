@@ -5,15 +5,8 @@ namespace App\Traits;
 use App\Services\AdminAuditService;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Trait à ajouter aux pages Filament (CreateRecord, EditRecord, etc.)
- * pour activer l'audit automatique des opérations CRUD
- */
 trait FilamentAuditTrait
 {
-    /**
-     * Hook appelé après la création d'un enregistrement
-     */
     protected function afterCreate(): void
     {
         if (method_exists(parent::class, 'afterCreate')) {
@@ -27,16 +20,12 @@ trait FilamentAuditTrait
         );
     }
 
-    /**
-     * Hook appelé après la modification d'un enregistrement
-     */
     protected function afterSave(): void
     {
         if (method_exists(parent::class, 'afterSave')) {
             parent::afterSave();
         }
 
-        // Uniquement pour les mises à jour (pas les créations)
         if (!$this->record->wasRecentlyCreated) {
             $changes = $this->record->getChanges();
 
@@ -59,9 +48,6 @@ trait FilamentAuditTrait
         }
     }
 
-    /**
-     * Hook appelé après la suppression d'un enregistrement
-     */
     protected function afterDelete(): void
     {
         if (method_exists(parent::class, 'afterDelete')) {
@@ -74,9 +60,6 @@ trait FilamentAuditTrait
         );
     }
 
-    /**
-     * Obtenir le nom lisible de la ressource pour l'audit
-     */
     protected function getAuditResourceName(): string
     {
         $resource = static::getResource();

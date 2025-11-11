@@ -51,8 +51,6 @@ class ListAdminAuditLogs extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            // Vous pouvez ajouter des widgets de statistiques ici
-        ];
+        return [];
     }
 }

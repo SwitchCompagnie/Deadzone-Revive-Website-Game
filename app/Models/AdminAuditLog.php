@@ -35,17 +35,11 @@ class AdminAuditLog extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Relation avec l'utilisateur qui a effectué l'action
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Obtenir le nom d'affichage de l'action
-     */
     public function getActionLabelAttribute(): string
     {
         return match ($this->action) {
@@ -62,9 +56,6 @@ class AdminAuditLog extends Model
         };
     }
 
-    /**
-     * Obtenir le badge de couleur pour l'action
-     */
     public function getActionColorAttribute(): string
     {
         return match ($this->action) {
@@ -77,25 +68,16 @@ class AdminAuditLog extends Model
         };
     }
 
-    /**
-     * Scope pour filtrer par utilisateur
-     */
     public function scopeByUser($query, $userId)
     {
         return $query->where('user_id', $userId);
     }
 
-    /**
-     * Scope pour filtrer par type de ressource
-     */
     public function scopeByResourceType($query, $resourceType)
     {
         return $query->where('resource_type', $resourceType);
     }
 
-    /**
-     * Scope pour filtrer par action
-     */
     public function scopeByAction($query, $action)
     {
         return $query->where('action', $action);
