@@ -5,7 +5,7 @@ namespace App\Filament\Resources\AdminAuditLogs\Pages;
 use App\Filament\Resources\AdminAuditLogs\AdminAuditLogResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListAdminAuditLogs extends ListRecords
