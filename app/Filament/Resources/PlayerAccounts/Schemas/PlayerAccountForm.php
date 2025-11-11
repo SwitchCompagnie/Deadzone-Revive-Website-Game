@@ -49,25 +49,33 @@ class PlayerAccountForm
                     ->required()
                     ->columnSpanFull()
                     ->rows(10)
-                    ->helperText('JSON format: contains notes, flags, and extra metadata'),
+                    ->helperText('JSON format: contains notes, flags, and extra metadata')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $state)
+                    ->dehydrateStateUsing(fn ($state) => is_string($state) ? json_decode($state, true) : $state),
                 Textarea::make('player_objects_json')
                     ->label('Player Objects (JSON)')
                     ->required()
                     ->columnSpanFull()
                     ->rows(15)
-                    ->helperText('JSON format: contains player data, survivors, buildings, resources, etc.'),
+                    ->helperText('JSON format: contains player data, survivors, buildings, resources, etc.')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $state)
+                    ->dehydrateStateUsing(fn ($state) => is_string($state) ? json_decode($state, true) : $state),
                 Textarea::make('neighbor_history_json')
                     ->label('Neighbor History (JSON)')
                     ->required()
                     ->columnSpanFull()
                     ->rows(10)
-                    ->helperText('JSON format: contains neighbor map data'),
+                    ->helperText('JSON format: contains neighbor map data')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $state)
+                    ->dehydrateStateUsing(fn ($state) => is_string($state) ? json_decode($state, true) : $state),
                 Textarea::make('inventory_json')
                     ->label('Inventory (JSON)')
                     ->required()
                     ->columnSpanFull()
                     ->rows(15)
-                    ->helperText('JSON format: contains inventory items and schematics'),
+                    ->helperText('JSON format: contains inventory items and schematics')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $state)
+                    ->dehydrateStateUsing(fn ($state) => is_string($state) ? json_decode($state, true) : $state),
             ]);
     }
 }
