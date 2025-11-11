@@ -32,7 +32,7 @@ class AdminAuditService
 
         return AdminAuditLog::create([
             'user_id' => $user?->id,
-            'user_name' => $user?->name ?? 'Système',
+            'user_name' => $user?->name ?? 'System',
             'action' => $action,
             'resource_type' => $resourceType,
             'resource_name' => $resourceName,
@@ -100,16 +100,16 @@ class AdminAuditService
     private static function generateDescription(string $action, ?string $resourceName, ?string $resourceTitle): string
     {
         $actionLabels = [
-            'view' => 'a consulté',
-            'create' => 'a créé',
-            'update' => 'a modifié',
-            'delete' => 'a supprimé',
-            'restore' => 'a restauré',
+            'view' => 'viewed',
+            'create' => 'created',
+            'update' => 'updated',
+            'delete' => 'deleted',
+            'restore' => 'restored',
         ];
 
         $actionLabel = $actionLabels[$action] ?? $action;
-        $resource = $resourceName ?? 'ressource';
-        $title = $resourceTitle ? " « {$resourceTitle} »" : '';
+        $resource = $resourceName ?? 'resource';
+        $title = $resourceTitle ? " \"{$resourceTitle}\"" : '';
 
         return "{$actionLabel} {$resource}{$title}";
     }
@@ -120,7 +120,7 @@ class AdminAuditService
 
         foreach ($sensitiveFields as $field) {
             if (isset($values[$field])) {
-                $values[$field] = '[MASQUÉ]';
+                $values[$field] = '[HIDDEN]';
             }
         }
 

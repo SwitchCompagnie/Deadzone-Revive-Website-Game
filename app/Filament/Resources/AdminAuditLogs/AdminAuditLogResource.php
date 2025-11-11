@@ -17,17 +17,17 @@ class AdminAuditLogResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationLabel = 'Traces D\'Audit';
+    protected static ?string $navigationLabel = 'Audit Logs';
 
-    protected static ?string $modelLabel = 'Trace D\'Audit';
+    protected static ?string $modelLabel = 'Audit Log';
 
-    protected static ?string $pluralModelLabel = 'Traces D\'Audit';
+    protected static ?string $pluralModelLabel = 'Audit Logs';
 
     protected static ?int $navigationSort = 100;
 
     public static function form(Schema $schema): Schema
     {
-        // Les logs d'audit ne sont pas modifiables
+        // Audit logs are not editable
         return $schema->schema([]);
     }
 
@@ -51,17 +51,17 @@ class AdminAuditLogResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false; // Les logs d'audit ne peuvent pas être créés manuellement
+        return false; // Audit logs cannot be created manually
     }
 
     public static function canEdit($record): bool
     {
-        return false; // Les logs d'audit ne peuvent pas être modifiés
+        return false; // Audit logs cannot be edited
     }
 
     public static function canDelete($record): bool
     {
-        return false; // Les logs d'audit ne peuvent pas être supprimés
+        return false; // Audit logs cannot be deleted
     }
 
     public static function canDeleteAny(): bool

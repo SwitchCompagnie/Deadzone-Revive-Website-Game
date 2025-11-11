@@ -43,15 +43,15 @@ class AdminAuditLog extends Model
     public function getActionLabelAttribute(): string
     {
         return match ($this->action) {
-            'view' => 'Consultation',
-            'create' => 'Création',
-            'update' => 'Modification',
-            'delete' => 'Suppression',
-            'restore' => 'Restauration',
-            'replicate' => 'Duplication',
-            'force_delete' => 'Suppression définitive',
-            'attach' => 'Attachement',
-            'detach' => 'Détachement',
+            'view' => 'View',
+            'create' => 'Create',
+            'update' => 'Update',
+            'delete' => 'Delete',
+            'restore' => 'Restore',
+            'replicate' => 'Replicate',
+            'force_delete' => 'Force Delete',
+            'attach' => 'Attach',
+            'detach' => 'Detach',
             default => ucfirst($this->action),
         };
     }
