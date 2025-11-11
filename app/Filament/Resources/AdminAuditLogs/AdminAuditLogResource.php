@@ -6,6 +6,7 @@ use App\Filament\Resources\AdminAuditLogs\Pages\ListAdminAuditLogs;
 use App\Filament\Resources\AdminAuditLogs\Pages\ViewAdminAuditLog;
 use App\Filament\Resources\AdminAuditLogs\Tables\AdminAuditLogsTable;
 use App\Models\AdminAuditLog;
+use BackedEnum;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
@@ -14,7 +15,7 @@ class AdminAuditLogResource extends Resource
 {
     protected static ?string $model = AdminAuditLog::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $navigationLabel = 'Traces d\'audit';
 
