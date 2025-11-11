@@ -1,9 +1,5 @@
 <x-filament-panels::page>
     <div class="mb-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 space-y-6">
-        <div>
-            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">Message Templates</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Quick presets for common broadcast messages</p>
-        </div>
 
         <div class="space-y-5">
             <div>
