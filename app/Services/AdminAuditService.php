@@ -60,17 +60,6 @@ class AdminAuditService
 
     public static function logUpdate(Model $resource, ?string $resourceName = null, ?array $oldValues = null, ?array $newValues = null): AdminAuditLog
     {
-        if (! $oldValues && ! $newValues && $resource->isDirty()) {
-            $changes = $resource->getDirty();
-            $oldValues = [];
-            $newValues = [];
-
-            foreach ($changes as $key => $newValue) {
-                $oldValues[$key] = $resource->getOriginal($key);
-                $newValues[$key] = $newValue;
-            }
-        }
-
         return self::log('update', $resource, null, $resourceName, $oldValues, $newValues);
     }
 
@@ -111,7 +100,7 @@ class AdminAuditService
         $resource = $resourceName ?? 'resource';
         $title = $resourceTitle ? " \"{$resourceTitle}\"" : '';
 
-        return "{$actionLabel} {$resource}{$title}";
+        return ucfirst("{$actionLabel} {$resource}{$title}");
     }
 
     private static function sanitizeValues(array $values): array

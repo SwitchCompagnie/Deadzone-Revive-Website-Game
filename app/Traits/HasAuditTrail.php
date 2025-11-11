@@ -7,53 +7,63 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasAuditTrail
 {
-    protected static function afterCreate(Model $record): void
+    protected static array $auditOriginalCache = [];
+
+    protected static function bootHasAuditTrail(): void
     {
-        AdminAuditService::logCreate(
-            $record,
-            static::getAuditResourceName(),
-            $record->getAttributes()
-        );
-    }
+        static::updating(function (Model $model) {
+            $cacheKey = get_class($model).':'.$model->getKey();
+            static::$auditOriginalCache[$cacheKey] = $model->getOriginal();
+        });
 
-    protected static function afterUpdate(Model $record): void
-    {
-        $changes = $record->getChanges();
+        static::updated(function (Model $model) {
+            $cacheKey = get_class($model).':'.$model->getKey();
+            $originalValues = static::$auditOriginalCache[$cacheKey] ?? [];
+            unset(static::$auditOriginalCache[$cacheKey]);
 
-        if (empty($changes)) {
-            return;
-        }
+            $changes = $model->getChanges();
 
-        $oldValues = [];
-        $newValues = [];
+            if (empty($changes)) {
+                return;
+            }
 
-        foreach ($changes as $key => $newValue) {
-            $oldValues[$key] = $record->getOriginal($key);
-            $newValues[$key] = $newValue;
-        }
+            $oldValues = [];
+            $newValues = [];
 
-        AdminAuditService::logUpdate(
-            $record,
-            static::getAuditResourceName(),
-            $oldValues,
-            $newValues
-        );
-    }
+            foreach ($changes as $key => $newValue) {
+                $oldValues[$key] = $originalValues[$key] ?? null;
+                $newValues[$key] = $newValue;
+            }
 
-    protected static function afterDelete(Model $record): void
-    {
-        AdminAuditService::logDelete(
-            $record,
-            static::getAuditResourceName()
-        );
-    }
+            AdminAuditService::logUpdate(
+                $model,
+                static::getAuditResourceName(),
+                $oldValues,
+                $newValues
+            );
+        });
 
-    protected static function afterRestore(Model $record): void
-    {
-        AdminAuditService::logRestore(
-            $record,
-            static::getAuditResourceName()
-        );
+        static::created(function (Model $model) {
+            AdminAuditService::logCreate(
+                $model,
+                static::getAuditResourceName(),
+                $model->getAttributes()
+            );
+        });
+
+        static::deleted(function (Model $model) {
+            AdminAuditService::logDelete(
+                $model,
+                static::getAuditResourceName()
+            );
+        });
+
+        static::restored(function (Model $model) {
+            AdminAuditService::logRestore(
+                $model,
+                static::getAuditResourceName()
+            );
+        });
     }
 
     protected static function getAuditResourceName(): string
