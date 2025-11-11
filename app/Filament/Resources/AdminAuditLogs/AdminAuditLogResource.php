@@ -23,8 +23,6 @@ class AdminAuditLogResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Traces d\'audit';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Administration';
-
     protected static ?int $navigationSort = 100;
 
     public static function form(Schema $schema): Schema
