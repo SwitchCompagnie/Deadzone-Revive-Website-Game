@@ -4,16 +4,16 @@ namespace App\Filament\Resources\AdminAuditLogs\Pages;
 
 use App\Filament\Resources\AdminAuditLogs\AdminAuditLogResource;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 use Filament\Infolists\Components;
 
 class ViewAdminAuditLog extends ViewRecord
 {
     protected static string $resource = AdminAuditLogResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Components\Section::make('Informations générales')
                     ->schema([

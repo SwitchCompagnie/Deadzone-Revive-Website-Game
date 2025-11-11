@@ -7,8 +7,8 @@ use App\Filament\Resources\AdminAuditLogs\Pages\ViewAdminAuditLog;
 use App\Filament\Resources\AdminAuditLogs\Tables\AdminAuditLogsTable;
 use App\Models\AdminAuditLog;
 use BackedEnum;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
 class AdminAuditLogResource extends Resource
@@ -27,10 +27,10 @@ class AdminAuditLogResource extends Resource
 
     protected static ?int $navigationSort = 100;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
         // Les logs d'audit ne sont pas modifiables
-        return $form->schema([]);
+        return $schema->schema([]);
     }
 
     public static function table(Table $table): Table
