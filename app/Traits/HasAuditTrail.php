@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use App\Services\AdminAuditService;
-use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasAuditTrail

@@ -66,18 +66,18 @@ class FilamentAuditMiddleware
             return [
                 'page_type' => 'dashboard',
                 'resource_type' => null,
-                'resource_name' => 'Tableau de bord',
-                'description' => 'a consulté le tableau de bord',
+                'resource_name' => 'Dashboard',
+                'description' => 'viewed the dashboard',
             ];
         }
 
         $resourceMap = [
-            'users' => 'Utilisateur',
-            'player-accounts' => 'Compte joueur',
-            'forum-categories' => 'Catégorie forum',
-            'forum-threads' => 'Discussion forum',
-            'forum-posts' => 'Message forum',
-            'admin-audit-logs' => 'Trace D\'Audit',
+            'users' => 'User',
+            'player-accounts' => 'Player Account',
+            'forum-categories' => 'Forum Category',
+            'forum-threads' => 'Forum Thread',
+            'forum-posts' => 'Forum Post',
+            'admin-audit-logs' => 'Audit Log',
         ];
 
         $resourceSlug = $segments[1] ?? null;
@@ -93,10 +93,10 @@ class FilamentAuditMiddleware
         };
 
         $description = match ($pageType) {
-            'create' => "a consulté le formulaire de création d'un(e) {$resourceName}",
-            'edit' => "a consulté le formulaire d'édition d'un(e) {$resourceName}" . ($id ? " (#{$id})" : ''),
-            'list' => "a consulté la liste des {$resourceName}s",
-            default => "a consulté la page {$resourceName}",
+            'create' => "viewed the creation form for {$resourceName}",
+            'edit' => "viewed the edit form for {$resourceName}".($id ? " (#{$id})" : ''),
+            'list' => "viewed the list of {$resourceName}s",
+            default => "viewed the {$resourceName} page",
         };
 
         return [

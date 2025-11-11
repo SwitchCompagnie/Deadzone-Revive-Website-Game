@@ -13,16 +13,16 @@ class AdminAuditLogsTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Date & Heure')
+                    ->label('Date & Time')
                     ->dateTime('d/m/Y H:i:s')
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Utilisateur')
+                    ->label('User')
                     ->searchable()
                     ->sortable()
-                    ->default(fn ($record) => $record->user_name ?? 'Système')
+                    ->default(fn ($record) => $record->user_name ?? 'System')
                     ->description(fn ($record) => $record->user?->email),
 
                 Tables\Columns\BadgeColumn::make('action')
@@ -33,13 +33,13 @@ class AdminAuditLogsTable
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('resource_name')
-                    ->label('Ressource')
+                    ->label('Resource')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('resource_title')
-                    ->label('Élément')
+                    ->label('Item')
                     ->searchable()
                     ->limit(30)
                     ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
@@ -47,6 +47,7 @@ class AdminAuditLogsTable
                         if (strlen($state) <= 30) {
                             return null;
                         }
+
                         return $state;
                     }),
 
@@ -60,11 +61,12 @@ class AdminAuditLogsTable
                         if (strlen($state) <= 50) {
                             return null;
                         }
+
                         return $state;
                     }),
 
                 Tables\Columns\TextColumn::make('ip_address')
-                    ->label('Adresse IP')
+                    ->label('IP Address')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -72,22 +74,22 @@ class AdminAuditLogsTable
                 Tables\Filters\SelectFilter::make('action')
                     ->label('Action')
                     ->options([
-                        'view' => 'Consultation',
-                        'create' => 'Création',
-                        'update' => 'Modification',
-                        'delete' => 'Suppression',
-                        'restore' => 'Restauration',
+                        'view' => 'View',
+                        'create' => 'Create',
+                        'update' => 'Update',
+                        'delete' => 'Delete',
+                        'restore' => 'Restore',
                     ])
                     ->multiple(),
 
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Utilisateur')
+                    ->label('User')
                     ->relationship('user', 'name')
                     ->searchable()
                     ->preload(),
 
                 Tables\Filters\SelectFilter::make('resource_name')
-                    ->label('Ressource')
+                    ->label('Resource')
                     ->options(function () {
                         return \App\Models\AdminAuditLog::query()
                             ->whereNotNull('resource_name')
@@ -100,9 +102,9 @@ class AdminAuditLogsTable
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         \Filament\Forms\Components\DatePicker::make('created_from')
-                            ->label('Du'),
+                            ->label('From'),
                         \Filament\Forms\Components\DatePicker::make('created_until')
-                            ->label('Au'),
+                            ->label('To'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -118,10 +120,10 @@ class AdminAuditLogsTable
             ])
             ->recordActions([
                 \Filament\Actions\ViewAction::make()
-                    ->label('Détails'),
+                    ->label('Details'),
             ])
             ->defaultSort('created_at', 'desc')
-            ->poll('30s') // Rafraîchir automatiquement toutes les 30 secondes
+            ->poll('30s') // Auto-refresh every 30 seconds
             ->striped();
     }
 }
