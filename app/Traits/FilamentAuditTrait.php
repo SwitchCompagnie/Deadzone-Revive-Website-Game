@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use App\Services\AdminAuditService;
-use Illuminate\Database\Eloquent\Model;
 
 trait FilamentAuditTrait
 {
@@ -26,10 +25,10 @@ trait FilamentAuditTrait
             parent::afterSave();
         }
 
-        if (!$this->record->wasRecentlyCreated) {
+        if (! $this->record->wasRecentlyCreated) {
             $changes = $this->record->getChanges();
 
-            if (!empty($changes)) {
+            if (! empty($changes)) {
                 $oldValues = [];
                 $newValues = [];
 

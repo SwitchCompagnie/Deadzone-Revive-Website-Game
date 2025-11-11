@@ -60,7 +60,7 @@ class AdminAuditService
 
     public static function logUpdate(Model $resource, ?string $resourceName = null, ?array $oldValues = null, ?array $newValues = null): AdminAuditLog
     {
-        if (!$oldValues && !$newValues && $resource->isDirty()) {
+        if (! $oldValues && ! $newValues && $resource->isDirty()) {
             $changes = $resource->getDirty();
             $oldValues = [];
             $newValues = [];
@@ -132,7 +132,7 @@ class AdminAuditService
         $changes = [];
 
         foreach ($new as $key => $value) {
-            if (!array_key_exists($key, $old) || $old[$key] !== $value) {
+            if (! array_key_exists($key, $old) || $old[$key] !== $value) {
                 $changes[$key] = [
                     'old' => $old[$key] ?? null,
                     'new' => $value,

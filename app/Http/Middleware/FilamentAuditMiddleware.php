@@ -94,7 +94,7 @@ class FilamentAuditMiddleware
 
         $description = match ($pageType) {
             'create' => "viewed the creation form for {$resourceName}",
-            'edit' => "viewed the edit form for {$resourceName}" . ($id ? " (#{$id})" : ''),
+            'edit' => "viewed the edit form for {$resourceName}".($id ? " (#{$id})" : ''),
             'list' => "viewed the list of {$resourceName}s",
             default => "viewed the {$resourceName} page",
         };

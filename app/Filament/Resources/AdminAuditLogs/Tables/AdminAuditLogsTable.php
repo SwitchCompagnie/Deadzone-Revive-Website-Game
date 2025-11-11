@@ -47,6 +47,7 @@ class AdminAuditLogsTable
                         if (strlen($state) <= 30) {
                             return null;
                         }
+
                         return $state;
                     }),
 
@@ -60,6 +61,7 @@ class AdminAuditLogsTable
                         if (strlen($state) <= 50) {
                             return null;
                         }
+
                         return $state;
                     }),
 
