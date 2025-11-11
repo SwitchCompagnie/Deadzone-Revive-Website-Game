@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\AdminAuditLogs\Pages;
 
 use App\Filament\Resources\AdminAuditLogs\AdminAuditLogResource;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components;
 use Filament\Infolists\Components as InfolistComponents;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components;
+use Filament\Schemas\Schema;
 
 class ViewAdminAuditLog extends ViewRecord
 {
@@ -71,7 +71,7 @@ class ViewAdminAuditLog extends ViewRecord
                             ->hiddenLabel()
                             ->columnSpanFull(),
                     ])
-                    ->visible(fn ($record) => !empty($record->old_values))
+                    ->visible(fn ($record) => ! empty($record->old_values))
                     ->collapsible(),
 
                 Components\Section::make('Nouvelles valeurs')
@@ -81,7 +81,7 @@ class ViewAdminAuditLog extends ViewRecord
                             ->hiddenLabel()
                             ->columnSpanFull(),
                     ])
-                    ->visible(fn ($record) => !empty($record->new_values))
+                    ->visible(fn ($record) => ! empty($record->new_values))
                     ->collapsible(),
 
                 Components\Section::make('Informations techniques')
@@ -113,7 +113,7 @@ class ViewAdminAuditLog extends ViewRecord
                             ->hiddenLabel()
                             ->columnSpanFull(),
                     ])
-                    ->visible(fn ($record) => !empty($record->metadata))
+                    ->visible(fn ($record) => ! empty($record->metadata))
                     ->collapsible()
                     ->collapsed(),
             ]);
