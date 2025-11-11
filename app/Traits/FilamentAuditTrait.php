@@ -8,14 +8,22 @@ trait FilamentAuditTrait
 {
     protected array $auditOriginalValues = [];
 
+    protected function beforeFill(): void
+    {
+        if (method_exists(parent::class, 'beforeFill')) {
+            parent::beforeFill();
+        }
+
+        // Capture original values from the database before form fill
+        if ($this->record->exists) {
+            $this->auditOriginalValues = $this->record->getAttributes();
+        }
+    }
+
     protected function beforeSave(): void
     {
         if (method_exists(parent::class, 'beforeSave')) {
             parent::beforeSave();
-        }
-
-        if ($this->record->exists && $this->record->isDirty()) {
-            $this->auditOriginalValues = $this->record->getOriginal();
         }
     }
 
@@ -38,18 +46,22 @@ trait FilamentAuditTrait
             parent::afterSave();
         }
 
-        if (! $this->record->wasRecentlyCreated) {
-            $changes = $this->record->getChanges();
+        if (! $this->record->wasRecentlyCreated && ! empty($this->auditOriginalValues)) {
+            // Compare current attributes with stored original values
+            $currentAttributes = $this->record->getAttributes();
+            $oldValues = [];
+            $newValues = [];
 
-            if (! empty($changes)) {
-                $oldValues = [];
-                $newValues = [];
-
-                foreach ($changes as $key => $newValue) {
-                    $oldValues[$key] = $this->auditOriginalValues[$key] ?? null;
+            foreach ($currentAttributes as $key => $newValue) {
+                // Check if the attribute exists in original values and has changed
+                if (array_key_exists($key, $this->auditOriginalValues) && $this->auditOriginalValues[$key] !== $newValue) {
+                    $oldValues[$key] = $this->auditOriginalValues[$key];
                     $newValues[$key] = $newValue;
                 }
+            }
 
+            // Log the update if there are changes
+            if (! empty($oldValues)) {
                 AdminAuditService::logUpdate(
                     $this->record,
                     $this->getAuditResourceName(),
