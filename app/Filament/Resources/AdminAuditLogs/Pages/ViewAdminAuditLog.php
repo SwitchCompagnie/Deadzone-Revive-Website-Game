@@ -5,7 +5,8 @@ namespace App\Filament\Resources\AdminAuditLogs\Pages;
 use App\Filament\Resources\AdminAuditLogs\AdminAuditLogResource;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
-use Filament\Infolists\Components;
+use Filament\Schemas\Components;
+use Filament\Infolists\Components as InfolistComponents;
 
 class ViewAdminAuditLog extends ViewRecord
 {
@@ -19,20 +20,20 @@ class ViewAdminAuditLog extends ViewRecord
                     ->schema([
                         Components\Grid::make(2)
                             ->schema([
-                                Components\TextEntry::make('created_at')
+                                InfolistComponents\TextEntry::make('created_at')
                                     ->label('Date & Heure')
                                     ->dateTime('d/m/Y H:i:s'),
 
-                                Components\TextEntry::make('user.name')
+                                InfolistComponents\TextEntry::make('user.name')
                                     ->label('Utilisateur')
                                     ->default(fn ($record) => $record->user_name ?? 'Système')
                                     ->url(fn ($record) => $record->user_id ? route('filament.admin.resources.users.edit', ['record' => $record->user_id]) : null),
 
-                                Components\TextEntry::make('user.email')
+                                InfolistComponents\TextEntry::make('user.email')
                                     ->label('Email utilisateur')
                                     ->default('N/A'),
 
-                                Components\TextEntry::make('action')
+                                InfolistComponents\TextEntry::make('action')
                                     ->label('Action')
                                     ->formatStateUsing(fn ($record) => $record->action_label)
                                     ->badge()
@@ -44,28 +45,28 @@ class ViewAdminAuditLog extends ViewRecord
                     ->schema([
                         Components\Grid::make(2)
                             ->schema([
-                                Components\TextEntry::make('resource_name')
+                                InfolistComponents\TextEntry::make('resource_name')
                                     ->label('Type de ressource'),
 
-                                Components\TextEntry::make('resource_title')
+                                InfolistComponents\TextEntry::make('resource_title')
                                     ->label('Élément'),
 
-                                Components\TextEntry::make('resource_id')
+                                InfolistComponents\TextEntry::make('resource_id')
                                     ->label('ID de l\'enregistrement'),
 
-                                Components\TextEntry::make('resource_type')
+                                InfolistComponents\TextEntry::make('resource_type')
                                     ->label('Classe du modèle')
                                     ->default('N/A'),
                             ]),
 
-                        Components\TextEntry::make('description')
+                        InfolistComponents\TextEntry::make('description')
                             ->label('Description')
                             ->columnSpanFull(),
                     ]),
 
                 Components\Section::make('Anciennes valeurs')
                     ->schema([
-                        Components\KeyValueEntry::make('old_values')
+                        InfolistComponents\KeyValueEntry::make('old_values')
                             ->label('')
                             ->hiddenLabel()
                             ->columnSpanFull(),
@@ -75,7 +76,7 @@ class ViewAdminAuditLog extends ViewRecord
 
                 Components\Section::make('Nouvelles valeurs')
                     ->schema([
-                        Components\KeyValueEntry::make('new_values')
+                        InfolistComponents\KeyValueEntry::make('new_values')
                             ->label('')
                             ->hiddenLabel()
                             ->columnSpanFull(),
@@ -87,15 +88,15 @@ class ViewAdminAuditLog extends ViewRecord
                     ->schema([
                         Components\Grid::make(2)
                             ->schema([
-                                Components\TextEntry::make('ip_address')
+                                InfolistComponents\TextEntry::make('ip_address')
                                     ->label('Adresse IP'),
 
-                                Components\TextEntry::make('url')
+                                InfolistComponents\TextEntry::make('url')
                                     ->label('URL')
                                     ->limit(50)
                                     ->tooltip(fn ($record) => $record->url),
 
-                                Components\TextEntry::make('user_agent')
+                                InfolistComponents\TextEntry::make('user_agent')
                                     ->label('User Agent')
                                     ->columnSpanFull()
                                     ->limit(100)
@@ -107,7 +108,7 @@ class ViewAdminAuditLog extends ViewRecord
 
                 Components\Section::make('Métadonnées')
                     ->schema([
-                        Components\KeyValueEntry::make('metadata')
+                        InfolistComponents\KeyValueEntry::make('metadata')
                             ->label('')
                             ->hiddenLabel()
                             ->columnSpanFull(),
