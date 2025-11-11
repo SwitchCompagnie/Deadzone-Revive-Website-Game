@@ -77,7 +77,7 @@ class FilamentAuditMiddleware
             'forum-categories' => 'Catégorie forum',
             'forum-threads' => 'Discussion forum',
             'forum-posts' => 'Message forum',
-            'admin-audit-logs' => 'Trace d\'audit',
+            'admin-audit-logs' => 'Trace D\'Audit',
         ];
 
         $resourceSlug = $segments[1] ?? null;

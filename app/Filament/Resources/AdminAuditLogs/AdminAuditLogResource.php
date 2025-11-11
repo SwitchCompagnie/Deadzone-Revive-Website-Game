@@ -17,11 +17,11 @@ class AdminAuditLogResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationLabel = 'Traces d\'audit';
+    protected static ?string $navigationLabel = 'Traces D\'Audit';
 
-    protected static ?string $modelLabel = 'Trace d\'audit';
+    protected static ?string $modelLabel = 'Trace D\'Audit';
 
-    protected static ?string $pluralModelLabel = 'Traces d\'audit';
+    protected static ?string $pluralModelLabel = 'Traces D\'Audit';
 
     protected static ?int $navigationSort = 100;
 
