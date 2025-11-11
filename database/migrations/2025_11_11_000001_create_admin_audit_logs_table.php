@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('user_name')->nullable();
             $table->string('action');
-            $table->string('resource_type');
+            $table->string('resource_type')->nullable();
             $table->string('resource_name')->nullable();
             $table->string('resource_id')->nullable();
             $table->string('resource_title')->nullable();
