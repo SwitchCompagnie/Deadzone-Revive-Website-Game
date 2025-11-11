@@ -6,6 +6,19 @@ use App\Services\AdminAuditService;
 
 trait FilamentAuditTrait
 {
+    protected array $auditOriginalValues = [];
+
+    protected function beforeSave(): void
+    {
+        if (method_exists(parent::class, 'beforeSave')) {
+            parent::beforeSave();
+        }
+
+        if ($this->record->exists && $this->record->isDirty()) {
+            $this->auditOriginalValues = $this->record->getOriginal();
+        }
+    }
+
     protected function afterCreate(): void
     {
         if (method_exists(parent::class, 'afterCreate')) {
@@ -33,7 +46,7 @@ trait FilamentAuditTrait
                 $newValues = [];
 
                 foreach ($changes as $key => $newValue) {
-                    $oldValues[$key] = $this->record->getOriginal($key);
+                    $oldValues[$key] = $this->auditOriginalValues[$key] ?? null;
                     $newValues[$key] = $newValue;
                 }
 
