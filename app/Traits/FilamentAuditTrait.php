@@ -14,7 +14,6 @@ trait FilamentAuditTrait
             parent::beforeFill();
         }
 
-        // Capture original values from the database before form fill
         if ($this->record->exists) {
             $this->auditOriginalValues = $this->record->getAttributes();
         }
@@ -47,20 +46,17 @@ trait FilamentAuditTrait
         }
 
         if (! $this->record->wasRecentlyCreated && ! empty($this->auditOriginalValues)) {
-            // Compare current attributes with stored original values
             $currentAttributes = $this->record->getAttributes();
             $oldValues = [];
             $newValues = [];
 
             foreach ($currentAttributes as $key => $newValue) {
-                // Check if the attribute exists in original values and has changed
                 if (array_key_exists($key, $this->auditOriginalValues) && $this->auditOriginalValues[$key] !== $newValue) {
                     $oldValues[$key] = $this->auditOriginalValues[$key];
                     $newValues[$key] = $newValue;
                 }
             }
 
-            // Log the update if there are changes
             if (! empty($oldValues)) {
                 AdminAuditService::logUpdate(
                     $this->record,

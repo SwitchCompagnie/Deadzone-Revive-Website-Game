@@ -27,7 +27,6 @@ class AdminAuditLogResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        // Audit logs are not editable
         return $schema->schema([]);
     }
 
@@ -51,17 +50,17 @@ class AdminAuditLogResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false; // Audit logs cannot be created manually
+        return false;
     }
 
     public static function canEdit($record): bool
     {
-        return false; // Audit logs cannot be edited
+        return false;
     }
 
     public static function canDelete($record): bool
     {
-        return false; // Audit logs cannot be deleted
+        return false;
     }
 
     public static function canDeleteAny(): bool
