@@ -27,12 +27,8 @@
     <!-- Game Scripts -->
     <script type="text/javascript" src="{{ config('app.url') }}/assets/js/game.js"></script>
     <script id="publishingnetwork" type="text/javascript" async src="{{ config('app.url') }}/assets/js/PublishingNetwork.js"></script>
-
-    @stack('head-scripts')
 </head>
 <body>
     @yield('content')
-
-    @stack('scripts')
 </body>
 </html>
