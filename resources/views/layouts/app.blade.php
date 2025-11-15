@@ -143,7 +143,7 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(109, 109, 109, 0.1);
             transform: translate(-50%, -50%);
             transition: width 0.5s ease, height 0.5s ease;
         }
@@ -154,7 +154,6 @@
         }
 
         .social-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
