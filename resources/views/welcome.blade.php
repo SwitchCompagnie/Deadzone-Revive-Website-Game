@@ -9,7 +9,7 @@
 @endpush
 
 @section('content')
-<body class="text-white flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
+<div class="flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
     <div class="fixed inset-0 bg-animated"></div>
     <div class="fixed inset-0 bg-dots"></div>
     <div class="fixed inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/80"></div>
@@ -178,7 +178,7 @@
             </button>
         </div>
     </div>
-</body>
+</div>
 @endsection
 
 @push('scripts')

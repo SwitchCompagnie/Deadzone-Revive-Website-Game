@@ -103,7 +103,7 @@
         }
     </style>
 </head>
-<body class="text-white">
+<body class="text-white min-h-screen">
     @yield('content')
 
     <script type="text/javascript">
