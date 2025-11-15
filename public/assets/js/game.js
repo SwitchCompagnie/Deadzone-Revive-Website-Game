@@ -43,6 +43,11 @@ $(document).ready(function () {
     updateServerStatus();
     setInterval(updateServerStatus, 60000);
 
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(function() {
+        $('.flash-message').fadeOut('slow');
+    }, 5000);
+
     // Get token from backend (set in game.blade.php) or URL param (fallback)
     window.token = window.gameToken || new URLSearchParams(window.location.search).get("token");
 

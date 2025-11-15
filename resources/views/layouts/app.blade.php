@@ -66,53 +66,20 @@
 
         /* Background */
         .bg-animated {
-            background: linear-gradient(45deg, #000000, #1a0000, #000000, #0a0000);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background: #000000;
         }
 
         .bg-dots {
-            background-image: radial-gradient(circle, rgb(220 38 38 / 77%) 1px, transparent 1px);
-            background-size: 30px 30px;
-            animation: pulse 8s ease-in-out infinite;
+            background: transparent;
         }
 
-        /* Form Container with Glassmorphism */
+        /* Form Container */
         .form-container {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(220, 38, 38, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
-                        inset 0 0 80px rgba(220, 38, 38, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
-        }
-
-        .form-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #dc2626, transparent);
-            animation: scanline 3s linear infinite;
-        }
-
-        .form-container::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(220, 38, 38, 0.05) 50%,
-                transparent 70%
-            );
-            background-size: 200% 200%;
-            animation: shimmer 3s linear infinite;
-            pointer-events: none;
         }
 
         /* Input Fields */
@@ -204,9 +171,7 @@
 
         /* Title Glow */
         .title-glow {
-            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5),
-                         0 0 20px rgba(220, 38, 38, 0.3),
-                         0 0 30px rgba(220, 38, 38, 0.2);
+            text-shadow: none;
         }
 
         .title-underline {
@@ -222,9 +187,8 @@
             transform: translateX(-50%);
             width: 60px;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #dc2626, transparent);
+            background: #dc2626;
             border-radius: 2px;
-            animation: glow 2s ease-in-out infinite;
         }
 
         /* Alert Styles */

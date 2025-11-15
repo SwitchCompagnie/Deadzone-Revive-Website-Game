@@ -1,4 +1,4 @@
-@extends('layouts.game')
+@extends('layouts.app')
 
 @section('title', $thread->title)
 
