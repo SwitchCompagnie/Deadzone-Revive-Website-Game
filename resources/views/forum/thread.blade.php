@@ -153,8 +153,4 @@
         </div>
     </div>
 </div>
-            </div>
-        </div>
-    @endauth
-</div>
 @endsection
