@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Forum') - Deadzone Revive</title>
-</head>
+@extends('layouts.app')
+
+@section('title', '@yield("page-title", "Forum") - Deadzone Revive')
+
+@section('content')
 <body class="text-white bg-black min-h-screen">
     <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,7 +42,7 @@
             </div>
         @endif
 
-        @yield('content')
+        @yield('forum-content')
     </main>
 
     <footer class="mt-auto border-t border-gray-800 bg-black">
@@ -54,4 +51,4 @@
         </div>
     </footer>
 </body>
-</html>
+@endsection

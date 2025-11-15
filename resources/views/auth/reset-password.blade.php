@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+@extends('layouts.app')
+
+@section('title', 'Reset Password - Deadzone Revive')
+
+@push('head-scripts')
     @if (env('TURNSTILE_ENABLED', false))
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     @endif
-</head>
+@endpush
+
+@section('content')
 <body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
     <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,4 +72,4 @@
         </div>
     </div>
 </body>
-</html>
+@endsection

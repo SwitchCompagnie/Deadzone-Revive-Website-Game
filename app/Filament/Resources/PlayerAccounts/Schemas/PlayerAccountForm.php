@@ -76,6 +76,14 @@ class PlayerAccountForm
                     ->helperText('JSON format: contains inventory items and schematics')
                     ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $state)
                     ->dehydrateStateUsing(fn ($state) => is_string($state) ? json_decode($state, true) : $state),
+                Textarea::make('pay_vault_json')
+                    ->label('Pay Vault (JSON)')
+                    ->required()
+                    ->columnSpanFull()
+                    ->rows(10)
+                    ->helperText('JSON format: contains player payment and purchase data')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $state)
+                    ->dehydrateStateUsing(fn ($state) => is_string($state) ? json_decode($state, true) : $state),
             ]);
     }
 }
