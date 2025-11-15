@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Email</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+@extends('layouts.app')
+
+@section('title', 'Verify Email - Deadzone Revive')
+
+@section('content')
 <body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
     <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +31,7 @@
         <p class="text-center text-gray-300 mb-6">
             A 6-digit verification code has been sent to your email address. Please check your inbox and enter the code below.
         </p>
-        
+
         @if (session('message'))
             <div class="mb-4 p-3 rounded-lg bg-green-900/50 border border-green-500 text-green-200 text-sm text-center">
                 {{ session('message') }}
@@ -50,16 +47,16 @@
                 </ul>
             </div>
         @endif
-        
+
         <form method="POST" action="{{ route('verification.verify-code') }}" class="mb-4">
             @csrf
             <div class="mb-4">
                 <label for="code" class="block text-sm font-medium mb-2 text-gray-300">Verification Code</label>
-                <input 
-                    type="text" 
-                    id="code" 
-                    name="code" 
-                    maxlength="6" 
+                <input
+                    type="text"
+                    id="code"
+                    name="code"
+                    maxlength="6"
                     pattern="[0-9]{6}"
                     placeholder="000000"
                     required
@@ -71,14 +68,14 @@
                 Verify Email
             </button>
         </form>
-        
+
         <form method="POST" action="{{ route('verification.resend-code') }}" class="mb-4">
             @csrf
             <button type="submit" class="w-full bg-transparent hover:bg-gray-900 text-gray-300 font-medium py-3 px-4 rounded-lg border border-gray-700 transition-all">
                 Resend Verification Code
             </button>
         </form>
-        
+
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="w-full bg-transparent hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
@@ -87,4 +84,4 @@
         </form>
     </div>
 </body>
-</html>
+@endsection

@@ -1,19 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scheduled Maintenance - Deadzone Revive</title>
-    <style>
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .pulse-animation {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-    </style>
-</head>
+@extends('layouts.app')
+
+@section('title', 'Scheduled Maintenance - Deadzone Revive')
+
+@push('styles')
+<style>
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    .pulse-animation {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+</style>
+@endpush
+
+@section('content')
 <body class="text-white bg-black flex items-center justify-center min-h-screen">
     <div class="text-center max-w-2xl mx-4">
         <div class="mb-8">
@@ -63,4 +64,4 @@
         </div>
     </div>
 </body>
-</html>
+@endsection

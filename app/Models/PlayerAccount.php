@@ -24,7 +24,8 @@ class PlayerAccount extends Model
         'server_metadata_json',
         'player_objects_json',
         'neighbor_history_json',
-        'inventory_json'
+        'inventory_json',
+        'pay_vault_json'
     ];
 
     protected $casts = [
@@ -33,6 +34,7 @@ class PlayerAccount extends Model
         'server_metadata_json' => 'array',
         'player_objects_json' => 'array',
         'neighbor_history_json' => 'array',
-        'inventory_json' => 'array'
+        'inventory_json' => 'array',
+        'pay_vault_json' => 'array'
     ];
 }

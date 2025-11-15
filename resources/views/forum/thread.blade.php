@@ -106,4 +106,43 @@
         {{ $posts->links() }}
     </div>
 @endif
+
+<!-- Reply Section -->
+<div class="mt-8">
+    @auth
+        <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm">
+            <h3 class="text-xl font-semibold mb-4">Reply to this thread</h3>
+            <form action="{{ route('forum.post.store', $thread->slug) }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label for="reply-content" class="block text-sm font-medium mb-2 text-gray-300">Your Reply</label>
+                    <textarea id="reply-content" name="content" rows="6" required
+                        class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 resize-vertical"
+                        placeholder="Write your reply...">{{ old('content') }}</textarea>
+                    @error('content')
+                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
+                        Post Reply
+                    </button>
+                </div>
+            </form>
+        </div>
+    @else
+        <div class="bg-gradient-to-r from-gray-900/80 to-gray-800/80 border border-gray-700 rounded-xl p-8 backdrop-blur-sm text-center">
+            <div class="max-w-md mx-auto">
+                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <h3 class="text-2xl font-bold text-white mb-2">Login Required</h3>
+                <p class="text-gray-400 mb-6">You must be logged in to reply to this thread and interact with the community.</p>
+                <a href="{{ route('login') }}" class="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
+                    Sign in to Reply
+                </a>
+            </div>
+        </div>
+    @endauth
+</div>
 @endsection

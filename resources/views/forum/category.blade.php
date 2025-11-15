@@ -20,11 +20,44 @@
         @auth
             <a href="{{ route('forum.thread.create', $category->slug) }}"
                class="flex-shrink-0 inline-flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
                 New Thread
             </a>
+        @else
+            <div class="flex-shrink-0 group relative">
+                <button disabled
+                   class="inline-flex items-center justify-center px-6 py-3 bg-gray-700 cursor-not-allowed rounded-lg text-gray-400 font-medium">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    New Thread
+                </button>
+                <div class="absolute top-full right-0 mt-2 w-64 p-3 bg-gray-800 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                    <p class="text-sm text-gray-300 mb-2">Login required to create threads</p>
+                    <a href="{{ route('login') }}" class="text-xs text-red-500 hover:text-red-400 font-medium">Sign in now →</a>
+                </div>
+            </div>
         @endauth
     </div>
 </div>
+
+@guest
+    <div class="mb-6 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-800/50 rounded-xl p-4 backdrop-blur-sm">
+        <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <div class="flex-1">
+                <h4 class="text-sm font-semibold text-blue-300 mb-1">Join the Conversation</h4>
+                <p class="text-sm text-gray-400">
+                    <a href="{{ route('login') }}" class="text-red-500 hover:text-red-400 font-medium">Sign in</a> to create new threads, reply to posts, and like content.
+                </p>
+            </div>
+        </div>
+    </div>
+@endguest
 
 <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden backdrop-blur-sm">
     <div class="bg-gray-800/50 px-6 py-4 border-b border-gray-700">
