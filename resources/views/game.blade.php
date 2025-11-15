@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
     window.gameToken = "{{ $token ?? '' }}";
-    window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'http://127.0.0.1:8080')) }}";
+    window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'https://serverlet.deadzonegame.net')) }}";
 </script>
 
 @section('content')
@@ -76,7 +76,7 @@
     <div id="footer">
         <a href="https://switchcompagnie.eu/terms" target="_blank">Terms</a> |
         <a href="https://switchcompagnie.eu/terms" target="_blank">Privacy</a> |
-        © 2025 Ruby Realms Studio.
+        © 2025 Ruby Realms Studio - V0.2
     </div>
 
     <div id="user-id">

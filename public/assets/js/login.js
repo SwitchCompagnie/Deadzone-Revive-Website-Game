@@ -21,7 +21,7 @@ if (!String.prototype.includes) {
     };
 }
 
-const BASE_URL = 'http://127.0.0.1:8080';
+const BASE_URL = 'https://serverlet.deadzonegame.net';
 const MAINTENANCE_API = '/api/maintenance/status';
 let debounceTimeout;
 let usernameTimer;

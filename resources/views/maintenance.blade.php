@@ -60,7 +60,7 @@
         </div>
 
         <div class="mt-6 text-gray-500 text-sm">
-            <p>© 2025 Ruby Realms Studio.</p>
+            <p>© 2025 Ruby Realms Studio - V0.2</p>
         </div>
     </div>
 </body>
