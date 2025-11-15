@@ -15,78 +15,110 @@
     <div class="fixed inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/80"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800 shadow-lg shadow-red-900/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <a href="{{ route('login') }}" class="flex-shrink-0">
+                <a href="{{ route('login') }}" class="flex-shrink-0 logo-container">
                     <img class="h-16 w-auto" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
                 </a>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('forum.index') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-800">Forum</a>
-                    <a href="https://status.deadzonegame.net/" target="_blank" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-gray-800">Status</a>
+                    <a href="{{ route('forum.index') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-all rounded-lg hover:bg-red-900/20 border border-transparent hover:border-red-500/50">
+                        <i class="fa-solid fa-comments mr-2"></i>Forum
+                    </a>
+                    <a href="https://status.deadzonegame.net/" target="_blank" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-all rounded-lg hover:bg-red-900/20 border border-transparent hover:border-red-500/50">
+                        <i class="fa-solid fa-circle-info mr-2"></i>Status
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Login Form -->
-    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black relative z-10 shadow-2xl">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold tracking-tight text-white">Login</h1>
-            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+    <div class="form-container p-10 rounded-2xl w-full max-w-lg mx-4 relative z-10">
+        <div class="text-center mb-10 relative z-10">
+            <h1 class="text-4xl font-bold tracking-tight text-white title-glow title-underline">
+                <i class="fa-solid fa-shield-halved mr-2"></i>DEADZONE
+            </h1>
+            <p class="text-gray-400 mt-4 text-sm">Enter the battlefield</p>
         </div>
 
         @if (session('error'))
-            <div class="mb-4 p-3 rounded-lg bg-red-900/50 border border-red-500 text-red-200 text-sm">
-                {{ session('error') }}
+            <div class="alert mb-6 p-4 rounded-lg bg-red-900/30 border border-red-500/50 text-red-200 text-sm backdrop-blur-sm">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i>{{ session('error') }}
             </div>
         @endif
 
         @if (session('status'))
-            <div class="mb-4 p-3 rounded-lg bg-green-900/50 border border-green-500 text-green-200 text-sm">
-                {{ session('status') }}
+            <div class="alert mb-6 p-4 rounded-lg bg-green-900/30 border border-green-500/50 text-green-200 text-sm backdrop-blur-sm">
+                <i class="fa-solid fa-circle-check mr-2"></i>{{ session('status') }}
             </div>
         @endif
 
-        <form id="pio-login" action="{{ route('login.post') }}" method="POST" class="space-y-5">
+        <form id="pio-login" action="{{ route('login.post') }}" method="POST" class="space-y-6 relative z-10">
             @csrf
 
             <!-- Username -->
-            <div>
-                <label for="username" class="block text-sm font-medium mb-1 text-gray-300">Username</label>
+            <div class="group">
+                <label for="username" class="block text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-user text-red-500"></i>
+                    <span>Username</span>
+                </label>
                 <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-user text-gray-500 text-sm"></i>
+                    </div>
                     <input type="text" id="username" name="username" value="{{ old('username') }}" required
-                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
-                    <div class="username-info text-xs mt-1 text-gray-400"></div>
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-lg text-white placeholder-gray-500 focus:outline-none"
+                        placeholder="Enter your username">
+                    <div class="username-info text-xs mt-2 text-gray-400"></div>
                     @error('username')
-                        <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+                        <div class="text-red-400 text-xs mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                        </div>
                     @enderror
                 </div>
             </div>
 
             <!-- Email -->
-            <div>
-                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email</label>
+            <div class="group">
+                <label for="email" class="block text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-envelope text-red-500"></i>
+                    <span>Email Address</span>
+                </label>
                 <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-envelope text-gray-500 text-sm"></i>
+                    </div>
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500"
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-lg text-white placeholder-gray-500 focus:outline-none"
                         placeholder="your-email@example.com">
-                    <div class="email-info text-xs mt-1 text-gray-400"></div>
+                    <div class="email-info text-xs mt-2 text-gray-400"></div>
                     @error('email')
-                        <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+                        <div class="text-red-400 text-xs mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                        </div>
                     @enderror
                 </div>
             </div>
 
             <!-- Password -->
-            <div>
-                <label for="password" class="block text-sm font-medium mb-1 text-gray-300">Password</label>
+            <div class="group">
+                <label for="password" class="block text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-red-500"></i>
+                    <span>Password</span>
+                </label>
                 <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-lock text-gray-500 text-sm"></i>
+                    </div>
                     <input type="password" id="password" name="password" required
-                        class="input-field w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
-                    <div class="password-info text-xs mt-1 text-gray-400"></div>
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-lg text-white placeholder-gray-500 focus:outline-none"
+                        placeholder="Enter your password">
+                    <div class="password-info text-xs mt-2 text-gray-400"></div>
                     @error('password')
-                        <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+                        <div class="text-red-400 text-xs mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                        </div>
                     @enderror
                 </div>
             </div>
@@ -123,58 +155,65 @@
 
             <!-- Submit Button -->
             <div>
-                <button type="submit" id="login-button" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
-                    <i class="fa-solid fa-right-to-bracket"></i> Register / Login
+                <button type="submit" id="login-button" class="btn-primary w-full flex items-center justify-center gap-3 py-4 px-6 rounded-lg font-bold text-base text-white uppercase tracking-wider relative z-10">
+                    <i class="fa-solid fa-right-to-bracket text-lg"></i>
+                    <span>Enter Deadzone</span>
+                    <i class="fa-solid fa-chevron-right text-sm"></i>
                 </button>
-                <div class="login-info text-xs mt-1 text-gray-400"></div>
+                <div class="login-info text-xs mt-2 text-gray-400 text-center"></div>
                 @error('login')
-                    <div class="text-red-500 text-xs mt-2 text-center">{{ $message }}</div>
+                    <div class="text-red-400 text-xs mt-2 text-center flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                    </div>
                 @enderror
             </div>
         </form>
 
         <!-- Social Login Divider -->
-        <div class="mt-6">
+        <div class="mt-8 relative z-10">
             <div class="relative">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-700"></div>
+                    <div class="w-full border-t border-gray-700/50"></div>
                 </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-black text-gray-400">Or continue with</span>
+                <div class="relative flex justify-center text-xs">
+                    <span class="px-4 bg-black/50 text-gray-400 uppercase tracking-wider font-semibold">
+                        <i class="fa-solid fa-bolt mr-1 text-red-500"></i>Quick Access
+                    </span>
                 </div>
             </div>
         </div>
 
         <!-- Social Buttons -->
-        <div class="flex justify-between mt-6 gap-3">
+        <div class="grid grid-cols-3 mt-6 gap-3 relative z-10">
             @if(isset($maintenanceMode) && $maintenanceMode)
-                <button disabled class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] opacity-50 cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg">
-                    <i class="fab fa-discord"></i> Discord
+                <button disabled class="social-btn flex items-center justify-center gap-2 bg-[#5865F2] opacity-50 cursor-not-allowed text-white font-semibold py-3.5 px-4 rounded-lg">
+                    <i class="fab fa-discord text-lg"></i>
                 </button>
-                <button disabled class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent opacity-50 cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg border border-gray-600">
-                    <i class="fab fa-x-twitter"></i>
+                <button disabled class="social-btn flex items-center justify-center gap-2 bg-transparent opacity-50 cursor-not-allowed text-white font-semibold py-3.5 px-4 rounded-lg border border-gray-600">
+                    <i class="fab fa-x-twitter text-lg"></i>
                 </button>
-                <button disabled class="social-btn flex-1 flex items-center justify-center gap-2 bg-white opacity-50 cursor-not-allowed text-black font-medium py-3 px-4 rounded-lg border border-gray-600">
-                    <i class="fab fa-github"></i> GitHub
+                <button disabled class="social-btn flex items-center justify-center gap-2 bg-white opacity-50 cursor-not-allowed text-black font-semibold py-3.5 px-4 rounded-lg">
+                    <i class="fab fa-github text-lg"></i>
                 </button>
             @else
-                <a href="{{ route('auth.social', 'discord') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-medium py-3 px-4 rounded-lg transition-all">
-                    <i class="fab fa-discord"></i> Discord
+                <a href="{{ route('auth.social', 'discord') }}" class="social-btn flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-3.5 px-4 rounded-lg relative z-10" title="Login with Discord">
+                    <i class="fab fa-discord text-xl"></i>
                 </a>
-                <a href="{{ route('auth.social', 'twitter') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-transparent hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
-                    <i class="fab fa-x-twitter"></i>
+                <a href="{{ route('auth.social', 'twitter') }}" class="social-btn flex items-center justify-center gap-2 bg-black hover:bg-gray-900 text-white font-semibold py-3.5 px-4 rounded-lg border border-gray-600 hover:border-gray-500 relative z-10" title="Login with Twitter">
+                    <i class="fab fa-x-twitter text-xl"></i>
                 </a>
-                <a href="{{ route('auth.social', 'github') }}" class="social-btn flex-1 flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-black font-medium py-3 px-4 rounded-lg border border-gray-600 transition-all">
-                    <i class="fab fa-github"></i> GitHub
+                <a href="{{ route('auth.social', 'github') }}" class="social-btn flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-black font-semibold py-3.5 px-4 rounded-lg relative z-10" title="Login with GitHub">
+                    <i class="fab fa-github text-xl"></i>
                 </a>
             @endif
         </div>
 
         <!-- Green Spirit Account -->
-        <div class="mt-4">
-            <button disabled class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-medium py-3 px-4 rounded-lg cursor-not-allowed opacity-50 transition-all">
+        <div class="mt-5 relative z-10">
+            <button disabled class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-green-700 to-green-600 text-white font-bold py-3.5 px-6 rounded-lg cursor-not-allowed opacity-40 relative overflow-hidden">
                 <img src="{{ asset('assets/images/greenspirits.svg') }}" alt="Green Spirit Icon" class="h-6 w-6">
-                Spirit Account [SOON]
+                <span>Spirit Account</span>
+                <span class="text-xs bg-white/20 px-2 py-1 rounded">SOON</span>
             </button>
         </div>
     </div>

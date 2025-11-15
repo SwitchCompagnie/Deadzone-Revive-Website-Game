@@ -30,7 +30,10 @@
     <script nomodule src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3/dist/fetch.umd.js"></script>
 
+    @stack('head-scripts')
+
     <style>
+        /* Animations */
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -41,6 +44,27 @@
             50% { opacity: 0.5; }
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3), 0 0 40px rgba(220, 38, 38, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(220, 38, 38, 0.5), 0 0 60px rgba(220, 38, 38, 0.2); }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        /* Background */
         .bg-animated {
             background: linear-gradient(45deg, #000000, #1a0000, #000000, #0a0000);
             background-size: 400% 400%;
@@ -53,18 +77,209 @@
             animation: pulse 8s ease-in-out infinite;
         }
 
-        @supports not (animation: gradientShift 15s ease infinite) {
-            .bg-animated {
-                background: #000000;
+        /* Form Container with Glassmorphism */
+        .form-container {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+                        inset 0 0 80px rgba(220, 38, 38, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #dc2626, transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        .form-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(220, 38, 38, 0.05) 50%,
+                transparent 70%
+            );
+            background-size: 200% 200%;
+            animation: shimmer 3s linear infinite;
+            pointer-events: none;
+        }
+
+        /* Input Fields */
+        .input-field {
+            background: rgba(0, 0, 0, 0.5) !important;
+            border: 1px solid rgba(75, 85, 99, 0.5) !important;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .input-field:focus {
+            background: rgba(0, 0, 0, 0.7) !important;
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3),
+                        inset 0 0 20px rgba(220, 38, 38, 0.05);
+        }
+
+        .input-field:hover {
+            border-color: rgba(220, 38, 38, 0.5) !important;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(220, 38, 38, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Social Buttons */
+        .social-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+
+        .social-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Logo Animation */
+        .logo-container {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Title Glow */
+        .title-glow {
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5),
+                         0 0 20px rgba(220, 38, 38, 0.3),
+                         0 0 30px rgba(220, 38, 38, 0.2);
+        }
+
+        .title-underline {
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #dc2626, transparent);
+            border-radius: 2px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        /* Alert Styles */
+        .alert {
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Checkbox Custom */
+        .custom-checkbox {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .custom-checkbox input:checked + .checkbox-box::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            color: white;
+            font-weight: bold;
+            animation: checkPop 0.3s ease-out;
+        }
+
+        @keyframes checkPop {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Browser Compatibility */
+        @supports not (animation: gradientShift 15s ease infinite) {
+            .bg-animated { background: #000000; }
         }
 
         @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-            .bg-animated {
-                background: #000000;
-            }
+            .bg-animated { background: #000000; }
+            .form-container { background: rgba(0, 0, 0, 0.9); }
         }
 
+        /* Flexbox Prefixes for older browsers */
         .flex {
             display: -webkit-box;
             display: -ms-flexbox;
@@ -89,12 +304,14 @@
             justify-content: space-between;
         }
 
+        /* Border Radius Prefixes */
         input, button, .form-container {
             -webkit-border-radius: 0.5rem;
             -moz-border-radius: 0.5rem;
             border-radius: 0.5rem;
         }
 
+        /* Transition Prefixes */
         input, button, a {
             -webkit-transition: all 0.3s ease;
             -moz-transition: all 0.3s ease;
@@ -109,5 +326,7 @@
     <script type="text/javascript">
         window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL')) }}";
     </script>
+
+    @stack('scripts')
 </body>
 </html>
