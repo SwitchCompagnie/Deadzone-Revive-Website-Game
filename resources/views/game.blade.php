@@ -97,7 +97,7 @@
         </div>
         <div id="ruby-realms-logo">
             <a href="https://switchcompagnie.eu" title="Ruby Realms Studio" target="_blank">
-                <img src="{{ config('app.url') }}/assets/images/rubyrealmslogo.gif" alt="Ruby Realms Studio">
+                <img src="{{ config('app.url') }}/assets/images/suliartist.png" alt="Ruby Realms Studio">
             </a>
         </div>
     </div>
