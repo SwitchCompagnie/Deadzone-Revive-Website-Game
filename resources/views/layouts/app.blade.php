@@ -30,8 +30,6 @@
     <script nomodule src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3/dist/fetch.umd.js"></script>
 
-    @stack('head-scripts')
-
     <style>
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
@@ -104,8 +102,6 @@
             transition: all 0.3s ease;
         }
     </style>
-
-    @stack('styles')
 </head>
 <body class="text-white">
     @yield('content')
@@ -113,7 +109,5 @@
     <script type="text/javascript">
         window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL')) }}";
     </script>
-
-    @stack('scripts')
 </body>
 </html>
