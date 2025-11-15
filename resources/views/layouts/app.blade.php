@@ -66,11 +66,16 @@
 
         /* Background */
         .bg-animated {
-            background: #000000;
+            background: linear-gradient(135deg, #000000 0%, #1a0000 25%, #000000 50%, #0d0000 75%, #000000 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
         .bg-dots {
-            background: transparent;
+            background-image: radial-gradient(rgba(220, 38, 38, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: pulse 4s ease-in-out infinite;
         }
 
         /* Form Container */

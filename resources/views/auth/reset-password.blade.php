@@ -9,67 +9,136 @@
 @endpush
 
 @section('content')
-<body class="text-white bg-black flex items-center justify-center min-h-screen pt-24">
-    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-90 border-b border-gray-800">
+<div class="flex items-center justify-center min-h-screen pt-24 overflow-hidden relative">
+    <div class="fixed inset-0 bg-animated"></div>
+    <div class="fixed inset-0 bg-dots"></div>
+    <div class="fixed inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/80"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800 shadow-lg shadow-red-900/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <img class="h-24" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
-                    </div>
+            <div class="flex items-center justify-between h-20">
+                <a href="{{ route('login') }}" class="flex-shrink-0 logo-container">
+                    <img class="h-16 w-auto" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('forum.index') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-all rounded-lg hover:bg-red-900/20 border border-transparent hover:border-red-500/50">
+                        <i class="fa-solid fa-comments mr-2"></i>Forum
+                    </a>
+                    <a href="https://status.deadzonegame.net/" target="_blank" class="text-gray-300 hover:text-white px-4 py-2 text-sm font-medium transition-all rounded-lg hover:bg-red-900/20 border border-transparent hover:border-red-500/50">
+                        <i class="fa-solid fa-circle-info mr-2"></i>Status
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="form-container p-8 rounded-xl w-full max-w-lg mx-4 border border-gray-800 bg-black/80 backdrop-blur-sm">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold tracking-tight text-white">Reset Your Password</h1>
-            <div class="w-16 h-1 bg-red-600 mx-auto mt-2 rounded-full"></div>
+
+    <!-- Form Container -->
+    <div class="form-container p-10 rounded-2xl w-full max-w-lg mx-4 relative z-10">
+        <div class="text-center mb-10 relative z-10">
+            <h1 class="text-4xl font-bold tracking-tight text-white title-glow title-underline">
+                <i class="fa-solid fa-lock-open mr-2"></i>Reset Password
+            </h1>
+            <p class="text-gray-400 mt-4 text-sm">Choose a new password for your account</p>
         </div>
-        <form method="POST" action="{{ route('password.update') }}" class="space-y-5">
+
+        @if (session('status'))
+            <div class="alert mb-6 p-4 rounded-lg bg-green-900/30 border border-green-500/50 text-green-200 text-sm backdrop-blur-sm">
+                <i class="fa-solid fa-circle-check mr-2"></i>{{ session('status') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('password.update') }}" class="space-y-6 relative z-10">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
-            <div>
-                <label for="email" class="block text-sm font-medium mb-1 text-gray-300">Email Address</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
-                @error('email')
-                    <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
-                @enderror
+            
+            <!-- Email -->
+            <div class="group">
+                <label for="email" class="block text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-envelope text-red-500"></i>
+                    <span>Email Address</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-envelope text-gray-500 text-sm"></i>
+                    </div>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-lg text-white placeholder-gray-500 focus:outline-none"
+                        placeholder="your-email@example.com">
+                    @error('email')
+                        <div class="text-red-400 text-xs mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                        </div>
+                    @enderror
+                </div>
             </div>
-            <div>
-                <label for="password" class="block text-sm font-medium mb-1 text-gray-300">New Password</label>
-                <input type="password" id="password" name="password" required
-                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
-                @error('password')
-                    <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
-                @enderror
+            
+            <!-- New Password -->
+            <div class="group">
+                <label for="password" class="block text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-red-500"></i>
+                    <span>New Password</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-lock text-gray-500 text-sm"></i>
+                    </div>
+                    <input type="password" id="password" name="password" required
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-lg text-white placeholder-gray-500 focus:outline-none"
+                        placeholder="Enter new password">
+                    @error('password')
+                        <div class="text-red-400 text-xs mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                        </div>
+                    @enderror
+                </div>
             </div>
-            <div>
-                <label for="password_confirmation" class="block text-sm font-medium mb-1 text-gray-300">Confirm Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required
-                    class="w-full px-4 py-3 rounded-lg bg-black border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+            
+            <!-- Confirm Password -->
+            <div class="group">
+                <label for="password_confirmation" class="block text-sm font-semibold mb-2 text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-red-500"></i>
+                    <span>Confirm Password</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-lock text-gray-500 text-sm"></i>
+                    </div>
+                    <input type="password" id="password_confirmation" name="password_confirmation" required
+                        class="input-field w-full pl-12 pr-4 py-3.5 rounded-lg text-white placeholder-gray-500 focus:outline-none"
+                        placeholder="Confirm new password">
+                </div>
             </div>
+            
+            <!-- Turnstile -->
             @if (env('TURNSTILE_ENABLED', false))
                 <div class="flex justify-center">
                     <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITEKEY') }}"></div>
                 </div>
                 @error('captcha')
-                    <div class="text-red-500 text-xs text-center">{{ $message }}</div>
+                    <div class="text-red-400 text-xs text-center flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation"></i>{{ $message }}
+                    </div>
                 @enderror
             @endif
+            
+            <!-- Submit Button -->
             <div>
-                <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 py-3 px-4 rounded-lg font-medium text-sm transition-all">
-                    Reset Password
+                <button type="submit" class="btn-primary w-full flex items-center justify-center gap-3 py-4 px-6 rounded-lg font-bold text-base text-white uppercase tracking-wider relative z-10">
+                    <i class="fa-solid fa-lock-open text-lg"></i>
+                    <span>Reset Password</span>
+                    <i class="fa-solid fa-chevron-right text-sm"></i>
                 </button>
             </div>
-            @if (session('status'))
-                <div class="text-green-500 text-xs mt-2 text-center">{{ session('status') }}</div>
-            @endif
         </form>
-        <div class="mt-6 text-center">
-            <a href="{{ route('welcome') }}" class="font-medium text-red-500 hover:text-red-400">Back to Login</a>
+        
+        <!-- Back to Login -->
+        <div class="mt-6 text-center relative z-10">
+            <a href="{{ route('welcome') }}" class="font-medium text-red-500 hover:text-red-400 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to Login</span>
+            </a>
         </div>
     </div>
-</body>
+</div>
 @endsection
