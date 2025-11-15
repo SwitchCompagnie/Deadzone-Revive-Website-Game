@@ -2,12 +2,10 @@
 
 @section('title', 'The Last Stand: Dead Zone')
 
-@push('head-scripts')
-    <script type="text/javascript">
-        window.gameToken = "{{ $token ?? '' }}";
-        window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'http://127.0.0.1:8080')) }}";
-    </script>
-@endpush
+<script type="text/javascript">
+    window.gameToken = "{{ $token ?? '' }}";
+    window.API_BASE_URL = "{{ config('app.api_base_url', env('API_BASE_URL', 'http://127.0.0.1:8080')) }}";
+</script>
 
 @section('content')
 <div id="wrapper">
@@ -20,7 +18,7 @@
                 <li id="code"><a href="#top" onclick="openRedeemCodeDialogue()">Redeem Code</a></li>
                 <li id="fan-page"><a href="https://deadzonegame.net" target="_blank" onclick="updateNavClass('fan-page')">Fan Page</a></li>
                 <li id="help"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('help')" target="_blank">Help</a></li>
-                <li id="feedback"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('feedback')" target="_blank">Forum</a></li>
+                <li id="forum"><a href="https://discord.gg/7EyxwYEush" onclick="updateNavClass('forum')">Forum</a></li>
             </ul>
         </div>
         <div id="fb-likes">
@@ -78,13 +76,13 @@
     <div id="footer">
         <a href="https://switchcompagnie.eu/terms" target="_blank">Terms</a> |
         <a href="https://switchcompagnie.eu/terms" target="_blank">Privacy</a> |
-        © 2025 Ruby Realms Studio. Fan-made revival.
+        © 2025 Ruby Realms Studio.
     </div>
 
     <div id="user-id">
         User ID : {{ Auth::check() ? Auth::user()->id : 'Connecting...' }}
     </div>
-    <div id="ruby-realms-logo">
+    <div class="ruby-realms-logo">
         <a href="https://switchcompagnie.eu" title="Ruby Realms Studio" target="_blank">
             <img src="{{ config('app.url') }}/assets/images/suliartist.png" alt="Ruby Realms Studio">
         </a>

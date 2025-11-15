@@ -179,12 +179,6 @@ a:hover {
   font-size: 10px;
 }
 
-#con-artist-logo {
-  float: right;
-  margin-top: -25px;
-  margin-right: 10px;
-}
-
 #user-id {
   margin-top: -10px;
   margin-left: 10px;
@@ -193,10 +187,14 @@ a:hover {
   font-size: 12px;
 }
 
-#ruby-realms-logo {
+.ruby-realms-logo {
   float: right;
   margin-top: -10px;
   margin-right: 10px;
+}
+
+.ruby-realms-logo img {
+  max-height: 50px;
 }
 
 #logo {
@@ -269,7 +267,7 @@ li#help a {
   left: 295px;
 }
 
-li#feedback a {
+li#forum a {
   width: 108px;
   left: 385px;
 }
@@ -314,13 +312,13 @@ li#help a:focus {
   background-position: -295px -49px;
 }
 
-li#feedback a:link,
-li#feedback a:visited {
+li#forum a:link,
+li#forum a:visited {
   background-position: -385px 0px;
 }
 
-li#feedback a:hover,
-li#feedback a:focus {
+li#forum a:hover,
+li#forum a:focus {
   background-position: -385px -49px;
 }
 
@@ -404,28 +402,28 @@ li#feedback a:focus {
   background-position: -205px -441px;
 }
 
-.help li#feedback a:link,
-.help li#feedback a:visited {
+.help li#forum a:link,
+.help li#forum a:visited {
   background-position: -385px -392px;
 }
 
-.help li#feedback a:hover,
-.help li#feedback a:focus {
+.help li#forum a:hover,
+.help li#forum a:focus {
   background-position: -385px -441px;
 }
 
-.feedback li#feedback a:link,
-.feedback li#feedback a:visited {
+.forum li#forum a:link,
+.forum li#forum a:visited {
   background-position: -385px -490px;
 }
 
-.feedback li#help a:link,
-.feedback li#help a:visited {
+.forum li#help a:link,
+.forum li#help a:visited {
   background-position: -295px -490px;
 }
 
-.feedback li#help a:hover,
-.feedback li#help a:focus {
+.forum li#help a:hover,
+.forum li#help a:focus {
   background-position: -295px -539px;
 }
 
