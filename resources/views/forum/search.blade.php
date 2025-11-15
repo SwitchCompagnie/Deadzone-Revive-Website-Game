@@ -1,4 +1,4 @@
-@extends('forum.layout')
+@extends('layouts.game')
 
 @section('title', 'Search Results')
 
