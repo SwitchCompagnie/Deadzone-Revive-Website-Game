@@ -203,6 +203,10 @@ a:hover {
   left: 14px;
 }
 
+#logo img {
+  max-height: 80px;
+}
+
 #fb-likes {
   position: absolute;
   bottom: 4px;
