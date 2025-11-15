@@ -1,5 +1,5 @@
 <!-- Navigation -->
-<nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800 shadow-lg shadow-red-900/20">
+<nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <a href="{{ route('login') }}" class="flex-shrink-0">

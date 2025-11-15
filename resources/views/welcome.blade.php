@@ -15,10 +15,10 @@
     <div class="fixed inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/80"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800 shadow-lg shadow-red-900/20">
+    <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <a href="{{ route('login') }}" class="flex-shrink-0 logo-container">
+                <a href="{{ route('login') }}" class="flex-shrink-0">
                     <img class="h-16 w-auto" src="https://deadzonegame.net/assets/img/logo.png" alt="Deadzone Revive Logo">
                 </a>
                 <div class="flex items-center gap-4">
@@ -36,10 +36,9 @@
     <!-- Login Form -->
     <div class="form-container p-10 rounded-2xl w-full max-w-lg mx-4 relative z-10">
         <div class="text-center mb-10 relative z-10">
-            <h1 class="text-4xl font-bold tracking-tight text-white title-glow title-underline">
-                <i class="fa-solid fa-shield-halved mr-2"></i>DEADZONE
+            <h1 class="text-4xl font-bold tracking-tight text-white title-underline">
+                WELCOME
             </h1>
-            <p class="text-gray-400 mt-4 text-sm">Enter the battlefield</p>
         </div>
 
         @if (session('error'))
@@ -158,7 +157,6 @@
                 <button type="submit" id="login-button" class="btn-primary w-full flex items-center justify-center gap-3 py-4 px-6 rounded-lg font-bold text-base text-white uppercase tracking-wider relative z-10">
                     <i class="fa-solid fa-right-to-bracket text-lg"></i>
                     <span>Enter Deadzone</span>
-                    <i class="fa-solid fa-chevron-right text-sm"></i>
                 </button>
                 <div class="login-info text-xs mt-2 text-gray-400 text-center"></div>
                 @error('login')
