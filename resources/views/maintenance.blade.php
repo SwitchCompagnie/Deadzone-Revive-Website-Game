@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scheduled Maintenance - Deadzone Revive</title>
-    @vite(['resources/css/app.css'])
     <style>
         @keyframes pulse {
             0%, 100% { opacity: 1; }

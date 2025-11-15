@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Forum') - Deadzone Revive</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="text-white bg-black min-h-screen">
     <nav class="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
